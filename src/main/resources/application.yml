@@ -1,1 +1,25 @@
+server:
+  port: 8080
+  shutdown: graceful
 
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 10s
+  datasource:
+    #    store DB files under ~/ with name mydb.*.db
+    url: jdbc:h2:~/bullish-store-db;AUTO_SERVER=TRUE
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings.trace: true
+      settings.web-allow-others: false
+  jpa:
+    hibernate:
+      ddl-auto: create  # re-create tables when startup
+    database-platform: org.hibernate.dialect.H2Dialect
+#    generate-ddl: true
+#    show-sql: true
