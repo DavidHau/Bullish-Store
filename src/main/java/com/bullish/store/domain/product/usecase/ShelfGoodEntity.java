@@ -14,13 +14,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "shelf_good", indexes = {
+    @Index(name = "idx_product_id", columnList = "product_id", unique = true)
+})
 public class ShelfGoodEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @OneToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    @JoinColumn(name = "product_id", referencedColumnName = "id", unique = true)
     private ProductEntity product;
 
     @Column(nullable = false)
