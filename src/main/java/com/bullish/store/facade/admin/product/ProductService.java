@@ -36,4 +36,8 @@ public class ProductService {
             Money.of(basePrice, currency)
         );
     }
+
+    public void discontinue(String productId, String shelfGoodId) {
+        shelfService.discontinue(productId, shelfGoodId);
+    }
 }

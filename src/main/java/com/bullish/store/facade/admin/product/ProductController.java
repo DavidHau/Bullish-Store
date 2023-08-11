@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -45,16 +42,31 @@ public class ProductController {
 
     @Operation(summary = "Put Product On Shelf")
     @PostMapping("/products/{product-id}/launch")
-    public ResponseEntity<String> createProduct(
+    public ResponseEntity<String> launchProduct(
         @PathVariable("product-id") String productId,
         @RequestBody ProductLaunchRequestDto productLaunchRequest
     ) {
-        String shelfGoodId = productService.launch(productId,
+        String shelfGoodId = productService.launch(
+            productId,
             productLaunchRequest.currency,
             productLaunchRequest.basePrice
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(shelfGoodId);
     }
+
+    @Operation(summary = "Remove Product From Shelf")
+    @DeleteMapping("/products/{product-id}/discontinue/{shelf-good-id}")
+    public ResponseEntity<String> discontinueProduct(
+        @PathVariable("product-id") String productId,
+        @PathVariable("shelf-good-id") String shelfGoodId
+    ) {
+        productService.discontinue(
+            productId,
+            shelfGoodId
+        );
+        return ResponseEntity.noContent().build();
+    }
+
 
     record ProductLaunchRequestDto(
         String currency,

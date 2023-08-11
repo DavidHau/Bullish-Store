@@ -15,7 +15,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,8 +26,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -179,4 +180,57 @@ class ProductControllerComponentTest {
             }
         );
     }
+
+    @Test
+    void given_productAlreadyRelaunched_when_discontinueProduct_then_return409() throws Exception {
+        // Given
+        ProductEntity product = productRepository.save(ProductEntity.builder()
+            .name("Galaxy S")
+            .name("Samsung mobile")
+            .build());
+        final UUID productId = product.getId();
+        final String originalShelfGoodId = launchProduct(productId, "HKD", 123)
+            .andExpect(status().isCreated())
+            .andReturn().getResponse().getContentAsString();
+        discontinueProduct(productId, originalShelfGoodId)
+            .andExpect(status().isNoContent());
+        launchProduct(productId, "HKD", 456.5)
+            .andExpect(status().isCreated());
+
+        // when
+        var result = discontinueProduct(productId, originalShelfGoodId)
+
+            // Then
+            .andExpect(status().isConflict())
+            .andReturn();
+
+        Optional<ShelfGoodEntity> actualShelf = shelfRepository.findByProductId(productId);
+        assertAll(
+            () -> assertThat(actualShelf).isPresent(),
+            () -> assertThat(BigDecimal.valueOf(456.5).compareTo(actualShelf.get().getBasePrice())).isEqualTo(0),
+            () -> assertThat(result.getResponse().getContentAsString()).contains("Product in shelf is outdated")
+        );
+    }
+
+    private ResultActions launchProduct(UUID productId, String currency, double basePrice) throws Exception {
+        return mockMvc.perform(post("/admin/products/{product-id}/launch", productId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                    {
+                        "currency": "%s",
+                        "basePrice": %s
+                    }
+                    """.formatted(currency, basePrice)
+            )
+        );
+    }
+
+    private ResultActions discontinueProduct(UUID productId, String shelfGoodId) throws Exception {
+        return mockMvc.perform(delete("/admin/products/{product-id}/discontinue/{shelf-good-id}"
+            , productId, shelfGoodId)
+            .contentType(MediaType.APPLICATION_JSON)
+        );
+    }
+
 }

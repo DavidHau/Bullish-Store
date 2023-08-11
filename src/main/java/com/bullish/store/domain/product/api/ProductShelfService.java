@@ -6,5 +6,5 @@ public interface ProductShelfService {
 
     String launch(String productId, Money basePrice);
 
-    void discontinue(String productId);
+    void discontinue(String productId, String shelfGoodId);
 }

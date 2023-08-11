@@ -1,5 +1,6 @@
 package com.bullish.store.domain.product.usecase;
 
+import com.bullish.store.common.exception.DataInconsistentException;
 import com.bullish.store.domain.product.api.ProductShelfService;
 import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class ProductShelfServiceImpl implements ProductShelfService {
     public String launch(String productId, Money basePrice) {
         ProductEntity productEntity = productRepository.findById(UUID.fromString(productId))
             .orElseThrow();
+        // TODO: throw custom exception when product's not found
         ShelfGoodEntity shelfGoodEntity = shelfRepository.save(ShelfGoodEntity.builder()
             .productId(productEntity.getId())
             .currency(basePrice.getCurrency().getCurrencyCode())
@@ -35,7 +37,12 @@ public class ProductShelfServiceImpl implements ProductShelfService {
     }
 
     @Override
-    public void discontinue(String productId) {
+    public void discontinue(String productId, String shelfGoodId) {
+        ShelfGoodEntity shelfGoodEntity = shelfRepository.findByProductId(UUID.fromString(productId)).orElseThrow();
+        if (!shelfGoodEntity.getId().toString().equals(shelfGoodId)) {
+            throw new DataInconsistentException("Product in shelf is outdated.");
+        }
 
+        shelfRepository.delete(shelfGoodEntity);
     }
 }
