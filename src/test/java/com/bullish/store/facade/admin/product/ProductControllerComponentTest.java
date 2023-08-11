@@ -1,6 +1,7 @@
 package com.bullish.store.facade.admin.product;
 
 import com.bullish.store.domain.product.api.ProductDto;
+import com.bullish.store.domain.product.api.ShelfGoodDto;
 import com.bullish.store.domain.product.usecase.ProductEntity;
 import com.bullish.store.domain.product.usecase.ProductRepository;
 import com.bullish.store.domain.product.usecase.ShelfGoodEntity;
@@ -110,7 +111,8 @@ class ProductControllerComponentTest {
     void given_3Products_when_getProducts_then_returnListOfProduct() throws Exception {
         // Given
         List<ProductEntity> productEntities = prepareDefaultProductList();
-        List<ProductDto> expectedProductList = productEntities.stream().map(this::getDto).collect(Collectors.toList());
+        final List<ProductDto> expectedProductList =
+            productEntities.stream().map(this::getDto).collect(Collectors.toList());
 
         // When
         var result = mockMvc.perform(get("/admin/products")
@@ -284,6 +286,49 @@ class ProductControllerComponentTest {
             () -> assertThat(result.getResponse().getContentAsString()).contains(
                 "Please discontinue product before removing product"),
             () -> assertThat(productRepository.findById(productId)).isPresent()
+        );
+    }
+
+    @Test
+    void given_2ProductsOnSale_when_getAllShelfGoods_then_returnListOfShelfGoods() throws Exception {
+        // Given
+        List<ProductEntity> productEntities = prepareDefaultProductList();
+        final String shelfGoodId0 = launchProduct(productEntities.get(0).getId(), "HKD", 123)
+            .andExpect(status().isCreated())
+            .andReturn().getResponse().getContentAsString();
+        final String shelfGoodId1 = launchProduct(productEntities.get(1).getId(), "HKD", 456.5)
+            .andExpect(status().isCreated())
+            .andReturn().getResponse().getContentAsString();
+        final List<ShelfGoodDto> expectedShelfGoodList = List.of(
+            new ShelfGoodDto(shelfGoodId0, this.getDto(productEntities.get(0)), "HKD", BigDecimal.valueOf(123)),
+            new ShelfGoodDto(shelfGoodId1, this.getDto(productEntities.get(1)), "HKD", BigDecimal.valueOf(456.5))
+        );
+
+        // When
+        var result = mockMvc.perform(get("/admin/products/shelf/goods")
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+
+            // Then
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andReturn();
+
+        // [{"id":"57c4cbcb-2028-427c-adae-2ebc713cbcfe","product":{"productId":"6d06e386-6014-4919-883a-64c8492e54ba","name":"iPhone XR","description":"Apple 10th special edition"},"currency":"HKD","basePrice":123.00},{"id":"3c91783a-e29a-4f3b-b4dd-ba758518f3e4","product":{"productId":"66210de1-e337-41d1-ae66-159aa10b77f2","name":"iPhone 13 mini","description":"Apple 13th small version"},"currency":"HKD","basePrice":456.50}]
+        List<ShelfGoodDto> actualShelfGoods =
+            mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+        assertAll(
+            () -> assertThat(actualShelfGoods.get(0).getId()).isNotEmpty(),
+            () -> assertThat(actualShelfGoods.get(0).getId()).isEqualTo(expectedShelfGoodList.get(0).getId()),
+            () -> assertThat(actualShelfGoods.get(0).getCurrency()).isNotEmpty(),
+            () -> assertThat(BigDecimal.valueOf(123).compareTo(actualShelfGoods.get(0).getBasePrice())).isEqualTo(0),
+            () -> assertThat(actualShelfGoods.get(0).getProduct()).isNotNull(),
+            () -> assertThat(actualShelfGoods.get(0).getProduct().getName()).isNotEmpty(),
+            () -> assertThat(actualShelfGoods.get(0).getProduct().getName())
+                .isEqualTo(expectedShelfGoodList.get(0).getProduct().getName())
         );
     }
 

@@ -2,6 +2,7 @@ package com.bullish.store.facade.admin.product;
 
 import com.bullish.store.domain.product.api.ProductDto;
 import com.bullish.store.domain.product.api.ProductManagement;
+import com.bullish.store.domain.product.api.ShelfGoodDto;
 import com.bullish.store.facade.admin.AdminFacadeController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,7 +37,7 @@ public class ProductController {
     @Operation(summary = "List Products")
     @GetMapping("/products")
     public ResponseEntity<List<ProductDto>> getAllProducts() {
-        List<ProductDto> productList = productService.findAll();
+        List<ProductDto> productList = productService.findAllProduct();
         return ResponseEntity.ok(productList);
     }
 
@@ -78,6 +79,12 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "List All Products on Shelf")
+    @GetMapping("/products/shelf/goods")
+    public ResponseEntity<List<ShelfGoodDto>> getAllShelfGoods() {
+        List<ShelfGoodDto> shelfGoods = productService.findAllProductOnSale();
+        return ResponseEntity.ok(shelfGoods);
+    }
 
     record ProductLaunchRequestDto(
         String currency,

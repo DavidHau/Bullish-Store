@@ -3,6 +3,7 @@ package com.bullish.store.facade.admin.product;
 import com.bullish.store.domain.product.api.ProductDto;
 import com.bullish.store.domain.product.api.ProductManagement;
 import com.bullish.store.domain.product.api.ProductShelfService;
+import com.bullish.store.domain.product.api.ShelfGoodDto;
 import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class ProductService {
         return productManagement.create(productRequest);
     }
 
-    List<ProductDto> findAll() {
+    List<ProductDto> findAllProduct() {
         return productManagement.findAll();
     }
 
@@ -43,5 +44,9 @@ public class ProductService {
 
     public void discontinue(String productId, String shelfGoodId) {
         shelfService.discontinue(productId, shelfGoodId);
+    }
+
+    public List<ShelfGoodDto> findAllProductOnSale() {
+        return shelfService.findAllGoods();
     }
 }
