@@ -3,10 +3,8 @@ package com.bullish.store.domain.product.usecase;
 import com.bullish.store.domain.product.api.ProductManagement;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 @Service
-@Validated
 @Transactional
 public class ProductManagementImpl implements ProductManagement {
 
