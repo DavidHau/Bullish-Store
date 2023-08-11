@@ -1,5 +1,7 @@
 package com.bullish.store.domain.product.api;
 
+import java.util.List;
+
 public interface ProductManagement {
 
     /**
@@ -8,6 +10,7 @@ public interface ProductManagement {
      */
     String create(CreateProductRequest request);
 
+    List<ProductDto> findAll();
 
     record CreateProductRequest(
         String productName,

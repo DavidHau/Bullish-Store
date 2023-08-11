@@ -1,11 +1,13 @@
 package com.bullish.store.facade.admin.product;
 
+import com.bullish.store.domain.product.api.ProductDto;
 import com.bullish.store.domain.product.api.ProductManagement;
 import com.bullish.store.domain.product.api.ProductShelfService;
 import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -22,6 +24,10 @@ public class ProductService {
 
     String create(ProductManagement.CreateProductRequest productRequest) {
         return productManagement.create(productRequest);
+    }
+
+    List<ProductDto> findAll() {
+        return productManagement.findAll();
     }
 
     public String launch(String productId, String currency, BigDecimal basePrice) {
