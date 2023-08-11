@@ -12,6 +12,8 @@ public interface ProductManagement {
 
     List<ProductDto> findAll();
 
+    void deleteNotOnSaleProduct(String productId);
+
     record CreateProductRequest(
         String productName,
         String description

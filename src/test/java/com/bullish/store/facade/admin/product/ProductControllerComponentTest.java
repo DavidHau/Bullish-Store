@@ -46,8 +46,8 @@ class ProductControllerComponentTest {
 
     @BeforeEach
     void setup() {
-        productRepository.deleteAll();
         shelfRepository.deleteAll();
+        productRepository.deleteAll();
     }
 
     private List<ProductEntity> prepareDefaultProductList() {
@@ -174,7 +174,7 @@ class ProductControllerComponentTest {
                 assertAll(
                     () -> assertThat(result.getResponse().getContentAsString()).isEqualTo(
                         actualShelfGoodEntity.getId().toString()),
-                    () -> assertThat(actualShelfGoodEntity.getProductId()).isEqualTo(product.getId()),
+                    () -> assertThat(actualShelfGoodEntity.getProduct().getId()).isEqualTo(product.getId()),
                     () -> assertThat(actualBasePrice).isEqualTo(Money.of(5000.5, "HKD"))
                 );
             }
@@ -230,6 +230,60 @@ class ProductControllerComponentTest {
         return mockMvc.perform(delete("/admin/products/{product-id}/discontinue/{shelf-good-id}"
             , productId, shelfGoodId)
             .contentType(MediaType.APPLICATION_JSON)
+        );
+    }
+
+    @Test
+    void given_shelfGoodAlreadyDiscontinued_when_deleteProduct_then_return204() throws Exception {
+        // Given
+        ProductEntity product = productRepository.save(ProductEntity.builder()
+            .name("Galaxy S")
+            .name("Samsung mobile")
+            .build());
+        final UUID productId = product.getId();
+        final String originalShelfGoodId = launchProduct(productId, "HKD", 123)
+            .andExpect(status().isCreated())
+            .andReturn().getResponse().getContentAsString();
+        discontinueProduct(productId, originalShelfGoodId)
+            .andExpect(status().isNoContent());
+        assertThat(productRepository.findById(productId)).isPresent();
+
+        // when
+        var result = mockMvc.perform(delete("/admin/products/{product-id}", productId)
+                .contentType(MediaType.APPLICATION_JSON))
+
+            // Then
+            .andExpect(status().isNoContent())
+            .andReturn();
+
+        assertThat(productRepository.findById(productId)).isNotPresent();
+    }
+
+    @Test
+    void given_productIsOnSale_when_deleteProduct_then_return423AndDoNotDelete() throws Exception {
+        // Given
+        ProductEntity product = productRepository.save(ProductEntity.builder()
+            .name("Galaxy S")
+            .name("Samsung mobile")
+            .build());
+        final UUID productId = product.getId();
+        launchProduct(productId, "HKD", 123)
+            .andExpect(status().isCreated())
+            .andReturn().getResponse().getContentAsString();
+        assertThat(productRepository.findById(productId)).isPresent();
+
+        // when
+        var result = mockMvc.perform(delete("/admin/products/{product-id}", productId)
+                .contentType(MediaType.APPLICATION_JSON))
+
+            // Then
+            .andExpect(status().isLocked())
+            .andReturn();
+
+        assertAll(
+            () -> assertThat(result.getResponse().getContentAsString()).contains(
+                "Please discontinue product before removing product"),
+            () -> assertThat(productRepository.findById(productId)).isPresent()
         );
     }
 

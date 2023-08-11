@@ -40,6 +40,17 @@ public class ProductController {
         return ResponseEntity.ok(productList);
     }
 
+    @Operation(summary = "Permanently Delete Product")
+    @DeleteMapping("/products/{product-id}")
+    public ResponseEntity<String> discontinueProduct(
+        @PathVariable("product-id") String productId
+    ) {
+        productService.delete(
+            productId
+        );
+        return ResponseEntity.noContent().build();
+    }
+
     @Operation(summary = "Put Product On Shelf")
     @PostMapping("/products/{product-id}/launch")
     public ResponseEntity<String> launchProduct(

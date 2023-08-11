@@ -29,7 +29,7 @@ public class ProductShelfServiceImpl implements ProductShelfService {
             .orElseThrow();
         // TODO: throw custom exception when product's not found
         ShelfGoodEntity shelfGoodEntity = shelfRepository.save(ShelfGoodEntity.builder()
-            .productId(productEntity.getId())
+            .product(productEntity)
             .currency(basePrice.getCurrency().getCurrencyCode())
             .basePrice(basePrice.getNumberStripped())
             .build());

@@ -30,6 +30,10 @@ public class ProductService {
         return productManagement.findAll();
     }
 
+    public void delete(String productId) {
+        productManagement.deleteNotOnSaleProduct(productId);
+    }
+
     public String launch(String productId, String currency, BigDecimal basePrice) {
         return shelfService.launch(
             productId,

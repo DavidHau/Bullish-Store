@@ -19,8 +19,9 @@ public class ShelfGoodEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private UUID productId;
+    @OneToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    private ProductEntity product;
 
     @Column(nullable = false)
     private String currency;
