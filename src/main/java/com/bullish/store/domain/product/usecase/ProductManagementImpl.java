@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,14 @@ public class ProductManagementImpl implements ProductManagement {
         if (isProductCurrentlyOnSale) {
             throw new ProductOnSaleLockException("Please discontinue product before removing product.");
         }
+        productRepository.deleteById(productId);
+    }
+
+    @Override
+    public void deleteOnSaleProduct(String productIdStr) {
+        UUID productId = UUID.fromString(productIdStr);
+        Optional<ShelfGoodEntity> shelfGoodOptional = shelfRepository.findByProductId(productId);
+        shelfGoodOptional.ifPresent(shelfRepository::delete);
         productRepository.deleteById(productId);
     }
 

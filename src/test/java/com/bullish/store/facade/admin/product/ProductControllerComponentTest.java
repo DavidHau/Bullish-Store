@@ -107,6 +107,54 @@ class ProductControllerComponentTest {
         );
     }
 
+
+    @Test
+    void given_noProduct_when_createProductWithPrice_then_return201AndAutoLaunchProduct() throws Exception {
+        // Given
+        assertThat(productRepository.findAll()).isEmpty();
+        assertThat(shelfRepository.findAll()).isEmpty();
+
+        // When
+        var result = mockMvc.perform(post("/admin/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                        {
+                            "productName": "iPhone 12",
+                            "description": "Apple's mobile product",
+                            "currency": "HKD",
+                            "basePrice": 3999.9
+                        }
+                        """
+                )
+            )
+
+            // Then
+            .andExpect(status().isCreated())
+            .andReturn();
+
+        List<ProductEntity> actualProductList = productRepository.findAll();
+        assertAll(
+            () -> assertThat(actualProductList.size()).isEqualTo(1),
+            () -> assertThat(actualProductList.get(0).getId()).isNotNull(),
+            () -> assertThat(result.getResponse().getContentAsString()).isEqualTo(
+                actualProductList.get(0).getId().toString()),
+            () -> assertThat(actualProductList.get(0).getName()).isEqualTo("iPhone 12"),
+            () -> assertThat(actualProductList.get(0).getDescription()).isEqualTo("Apple's mobile product"),
+
+            () -> {
+                ShelfGoodEntity actualShelfGood =
+                    shelfRepository.findByProductId(actualProductList.get(0).getId()).get();
+                assertAll(
+                    () -> assertThat(actualShelfGood.getId()).isNotNull(),
+                    () -> assertThat(actualShelfGood.getProduct().getId()).isEqualTo(actualProductList.get(0).getId()),
+                    () -> assertThat(actualShelfGood.getCurrency()).isEqualTo("HKD"),
+                    () -> assertThat(BigDecimal.valueOf(3999.9).compareTo(actualShelfGood.getBasePrice())).isEqualTo(0)
+                );
+            }
+        );
+    }
+
     @Test
     void given_3Products_when_getProducts_then_returnListOfProduct() throws Exception {
         // Given
@@ -286,6 +334,61 @@ class ProductControllerComponentTest {
             () -> assertThat(result.getResponse().getContentAsString()).contains(
                 "Please discontinue product before removing product"),
             () -> assertThat(productRepository.findById(productId)).isPresent()
+        );
+    }
+
+    @Test
+    void given_productIsOnSale_when_deleteOnSaleProduct_then_return204AndAutoDiscontinueProductAndRemove()
+        throws Exception {
+        // Given
+        ProductEntity product = productRepository.save(ProductEntity.builder()
+            .name("Galaxy S")
+            .name("Samsung mobile")
+            .build());
+        final UUID productId = product.getId();
+        launchProduct(productId, "HKD", 123)
+            .andExpect(status().isCreated())
+            .andReturn().getResponse().getContentAsString();
+        assertThat(productRepository.findById(productId)).isPresent();
+        assertThat(shelfRepository.findByProductId(productId)).isPresent();
+
+        // when
+        var result = mockMvc.perform(delete("/admin/products/{product-id}?auto-discontinue=true", productId)
+                .contentType(MediaType.APPLICATION_JSON))
+
+            // Then
+            .andExpect(status().isNoContent())
+            .andReturn();
+
+        assertAll(
+            () -> assertThat(shelfRepository.findByProductId(productId)).isNotPresent(),
+            () -> assertThat(productRepository.findById(productId)).isNotPresent()
+        );
+    }
+
+    @Test
+    void given_productIsNotOnSale_when_deleteOnSaleProduct_then_return204AndRemove()
+        throws Exception {
+        // Given
+        ProductEntity product = productRepository.save(ProductEntity.builder()
+            .name("Galaxy S")
+            .name("Samsung mobile")
+            .build());
+        final UUID productId = product.getId();
+        assertThat(productRepository.findById(productId)).isPresent();
+        assertThat(shelfRepository.findByProductId(productId)).isNotPresent();
+
+        // when
+        var result = mockMvc.perform(delete("/admin/products/{product-id}?auto-discontinue=true", productId)
+                .contentType(MediaType.APPLICATION_JSON))
+
+            // Then
+            .andExpect(status().isNoContent())
+            .andReturn();
+
+        assertAll(
+            () -> assertThat(shelfRepository.findByProductId(productId)).isNotPresent(),
+            () -> assertThat(productRepository.findById(productId)).isNotPresent()
         );
     }
 

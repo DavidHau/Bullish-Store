@@ -1,7 +1,6 @@
 package com.bullish.store.facade.admin.product;
 
 import com.bullish.store.domain.product.api.ProductDto;
-import com.bullish.store.domain.product.api.ProductManagement;
 import com.bullish.store.domain.product.api.ShelfGoodDto;
 import com.bullish.store.facade.admin.AdminFacadeController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +27,7 @@ public class ProductController {
     @Operation(summary = "Create Product")
     @PostMapping("/products")
     public ResponseEntity<String> createProduct(
-        @RequestBody ProductManagement.CreateProductRequest productRequest
+        @RequestBody CreateProductRequest productRequest
     ) {
         String productId = productService.create(productRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(productId);
@@ -44,10 +43,12 @@ public class ProductController {
     @Operation(summary = "Permanently Delete Product")
     @DeleteMapping("/products/{product-id}")
     public ResponseEntity<String> discontinueProduct(
-        @PathVariable("product-id") String productId
+        @PathVariable("product-id") String productId,
+        @RequestParam(value = "auto-discontinue", required = false) Boolean isAutoDiscontinue
     ) {
         productService.delete(
-            productId
+            productId,
+            Boolean.TRUE.equals(isAutoDiscontinue)
         );
         return ResponseEntity.noContent().build();
     }
@@ -84,6 +85,14 @@ public class ProductController {
     public ResponseEntity<List<ShelfGoodDto>> getAllShelfGoods() {
         List<ShelfGoodDto> shelfGoods = productService.findAllProductOnSale();
         return ResponseEntity.ok(shelfGoods);
+    }
+
+    record CreateProductRequest(
+        String productName,
+        String description,
+        String currency,
+        BigDecimal basePrice
+    ) {
     }
 
     record ProductLaunchRequestDto(

@@ -14,6 +14,8 @@ public interface ProductManagement {
 
     void deleteNotOnSaleProduct(String productId);
 
+    void deleteOnSaleProduct(String productId);
+
     record CreateProductRequest(
         String productName,
         String description

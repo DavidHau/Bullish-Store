@@ -4,6 +4,7 @@ import com.bullish.store.domain.product.api.ProductDto;
 import com.bullish.store.domain.product.api.ProductManagement;
 import com.bullish.store.domain.product.api.ProductShelfService;
 import com.bullish.store.domain.product.api.ShelfGoodDto;
+import org.apache.commons.lang3.StringUtils;
 import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +24,29 @@ public class ProductService {
         this.shelfService = shelfService;
     }
 
-    String create(ProductManagement.CreateProductRequest productRequest) {
-        return productManagement.create(productRequest);
+    String create(ProductController.CreateProductRequest productRequest) {
+        String productId = productManagement.create(new ProductManagement.CreateProductRequest(
+            productRequest.productName(),
+            productRequest.description()
+        ));
+
+        // Auto launch product
+        if (StringUtils.isNotEmpty(productRequest.currency())) {
+            launch(productId, productRequest.currency(), productRequest.basePrice());
+        }
+        return productId;
     }
 
     List<ProductDto> findAllProduct() {
         return productManagement.findAll();
     }
 
-    public void delete(String productId) {
-        productManagement.deleteNotOnSaleProduct(productId);
+    public void delete(String productId, boolean isAutoDiscontinue) {
+        if (isAutoDiscontinue) {
+            productManagement.deleteOnSaleProduct(productId);
+        } else {
+            productManagement.deleteNotOnSaleProduct(productId);
+        }
     }
 
     public String launch(String productId, String currency, BigDecimal basePrice) {
