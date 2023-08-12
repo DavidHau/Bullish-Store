@@ -55,7 +55,7 @@ public class CheckOutServiceImpl implements CheckOutService {
             .reduce(Money::add)
             .orElse(Money.zero(totalBasicPrice.getCurrency()));
 
-        final Money totalPrice = totalBasicPrice.subtract(totalDiscountedAmount);
+        final Money totalPrice = totalBasicPrice.add(totalDiscountedAmount);
 
         ReceiptDto receipt = ReceiptDto.builder()
             .customerId(basket.getCustomerId())
@@ -94,7 +94,7 @@ public class CheckOutServiceImpl implements CheckOutService {
     }
 
     private void applyDiscount(ReceiptDto.LineItem good, DiscountRatioDto ratioDiscount) {
-        Money discountAmount = good.getBasePrice().multiply(ratioDiscount.getOffRatio());
+        Money discountAmount = good.getBasePrice().multiply(ratioDiscount.getOffRatio()).negate();
         good.setDiscountName(ratioDiscount.getName());
         good.setDiscountedAmount(discountAmount);
     }

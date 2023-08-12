@@ -171,7 +171,7 @@ class CheckOutServiceTest {
                         SHELF_GOOD_2.getProduct().getName(),
                         Money.of(SHELF_GOOD_2.getBasePrice(), SHELF_GOOD_2.getCurrency()),
                         "2nd item 40% off",
-                        Money.of(2000, "HKD")   // 5000 * 40% = 2000
+                        Money.of(-2000, "HKD")   // 5000 * 40% = 2000
                     ), new ReceiptDto.LineItem(2,
                         SHELF_GOOD_2.getId(),
                         SHELF_GOOD_2.getProduct().getProductId(),
@@ -185,11 +185,11 @@ class CheckOutServiceTest {
                         SHELF_GOOD_2.getProduct().getName(),
                         Money.of(SHELF_GOOD_2.getBasePrice(), SHELF_GOOD_2.getCurrency()),
                         "2nd item 40% off",
-                        Money.of(2000, "HKD")   // 5000 * 40% = 2000
+                        Money.of(-2000, "HKD")   // 5000 * 40% = 2000
                     )),
 
             () -> assertThat(actualReceipt.getTotalBasePrice()).isEqualTo(Money.of(20000, "HKD")),
-            () -> assertThat(actualReceipt.getTotalDiscount()).isEqualTo(Money.of(4000, "HKD")),
+            () -> assertThat(actualReceipt.getTotalDiscount()).isEqualTo(Money.of(-4000, "HKD")),
             () -> assertThat(actualReceipt.getTotalPrice()).isEqualTo(Money.of(16000, "HKD"))
         );
     }

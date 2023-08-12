@@ -174,7 +174,7 @@ class ShoppingControllerComponentTest {
     }
 
     @Test
-    void given_invalidShelfGoodId_when_addGoodToBasket_then_return40X() throws Exception {
+    void given_invalidShelfGoodId_when_addGoodToBasket_then_return400() throws Exception {
         // Given
         final String customerId = "x123456";
         final UUID goodId = UUID.randomUUID();
