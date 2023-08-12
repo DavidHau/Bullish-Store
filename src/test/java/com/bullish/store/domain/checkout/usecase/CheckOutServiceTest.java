@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,7 +74,8 @@ class CheckOutServiceTest {
     );
     private final BasketDto BASKET_1 = new BasketDto(BASKET_ID, CUSTOMER_ID, List.of(
         new LineItemDto("0", SHELF_GOOD_1.getId(), SHELF_GOOD_1.getProduct().getProductId()),
-        new LineItemDto("1", SHELF_GOOD_3.getId(), SHELF_GOOD_3.getProduct().getProductId())
+        new LineItemDto("1", SHELF_GOOD_2.getId(), SHELF_GOOD_3.getProduct().getProductId()),
+        new LineItemDto("2", SHELF_GOOD_3.getId(), SHELF_GOOD_3.getProduct().getProductId())
     ));
 
     @BeforeEach
@@ -87,9 +89,14 @@ class CheckOutServiceTest {
     }
 
     @Test
-    void test() { // TODO
+    void given_basketContains3items_when_getReceipt_then_returnWithTotalPriceCalculated() {
         ReceiptDto receipt = checkOutService.getReceipt(CUSTOMER_ID);
 
-        assertThat(receipt.getTotalPrice()).isEqualTo(Money.of(599.9, "HKD"));
+        assertAll(
+            () -> assertThat(receipt.getCustomerId()).isEqualTo(CUSTOMER_ID),
+            () -> assertThat(receipt.getBasketId()).isEqualTo(BASKET_ID),
+            () -> assertThat(receipt.getLineItemList()).hasSize(3),
+            () -> assertThat(receipt.getTotalPrice()).isEqualTo(Money.of(5599.9, "HKD"))
+        );
     }
 }

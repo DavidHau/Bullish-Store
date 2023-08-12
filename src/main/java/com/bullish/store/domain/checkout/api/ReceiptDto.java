@@ -11,6 +11,8 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 public class ReceiptDto {
+    private String customerId;
+    private String basketId;
     private List<LineItem> lineItemList;
     private Money totalPrice;
 

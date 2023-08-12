@@ -38,7 +38,7 @@ public class CheckOutServiceImpl implements CheckOutService {
         Money totalBasicPrice = goods.stream().map(ReceiptDto.LineItem::basePrice)
             .reduce(Money::add)
             .orElseThrow();
-        ReceiptDto receipt = new ReceiptDto(goods, totalBasicPrice);
+        ReceiptDto receipt = new ReceiptDto(basket.getCustomerId(), basket.getId(), goods, totalBasicPrice);
 
         // TODO: handle discounts
         return receipt;
