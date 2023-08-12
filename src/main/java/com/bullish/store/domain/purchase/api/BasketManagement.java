@@ -5,9 +5,8 @@ public interface BasketManagement {
     /**
      * @param customerId
      * @param shelfGoodId
-     * @param productId
      * @return basketId
      */
-    String addShelfGoodToBasket(String customerId, String shelfGoodId, String productId);
+    String addShelfGoodToBasket(String customerId, String shelfGoodId);
 
 }

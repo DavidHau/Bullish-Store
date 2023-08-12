@@ -6,7 +6,12 @@ import com.bullish.store.domain.product.api.ProductShelfService;
 import com.bullish.store.domain.product.api.ShelfGoodDto;
 import com.bullish.store.domain.product.usecase.ProductEntity;
 import com.bullish.store.domain.product.usecase.ProductRepository;
+import com.bullish.store.domain.product.usecase.ShelfGoodEntity;
 import com.bullish.store.domain.product.usecase.ShelfRepository;
+import com.bullish.store.domain.purchase.usecase.BasketEntity;
+import com.bullish.store.domain.purchase.usecase.BasketRepository;
+import com.bullish.store.domain.purchase.usecase.LineItemEntity;
+import com.bullish.store.domain.purchase.usecase.LineItemRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javamoney.moneta.Money;
@@ -19,11 +24,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,13 +45,19 @@ class ShoppingControllerComponentTest {
     private ProductRepository productRepository;
 
     @Autowired
+    private ShelfRepository shelfRepository;
+
+    @Autowired
+    BasketRepository basketRepository;
+
+    @Autowired
+    LineItemRepository lineItemRepository;
+
+    @Autowired
     private ProductManagement productManagement;
 
     @Autowired
     private ProductShelfService shelfService;
-
-    @Autowired
-    private ShelfRepository shelfRepository;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -65,6 +79,8 @@ class ShoppingControllerComponentTest {
 
     @BeforeEach
     void setup() {
+        lineItemRepository.deleteAll();
+        basketRepository.deleteAll();
         shelfRepository.deleteAll();
         productRepository.deleteAll();
         prepareDefaultProductList();
@@ -126,5 +142,57 @@ class ShoppingControllerComponentTest {
         );
     }
 
+    @Test
+    void given_validShelfGoodId_when_addGoodToBasket_then_return204() throws Exception {
+        // Given
+        final String customerId = "x123456";
+        final ShelfGoodEntity toBeAddedGood = shelfRepository.findByProductId(ON_SALE_PRODUCT_1.getId()).get();
+        final UUID goodId = toBeAddedGood.getId();
+
+        // When
+        var result = mockMvc.perform(post("/customer/basket/{shelf-good-id}", goodId)
+                .header("x-bullish-customer-id", customerId)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+
+            // Then
+            .andExpect(status().isNoContent())
+            .andReturn();
+
+        Optional<BasketEntity> actualBasket = basketRepository.findByCustomerId(customerId);
+        assertAll(
+            () -> assertThat(actualBasket).isPresent(),
+            () -> assertThat(actualBasket.get().getCustomerId()).isEqualTo(customerId),
+            () -> {
+                List<LineItemEntity> actualLineItemList = lineItemRepository.findAllByBasket(actualBasket.get());
+                assertAll(
+                    () -> assertThat(actualLineItemList).hasSize(1),
+                    () -> assertThat(actualLineItemList.get(0).getShelfGoodId()).isEqualTo(goodId.toString())
+                );
+            }
+        );
+    }
+
+    @Test
+    void given_invalidShelfGoodId_when_addGoodToBasket_then_return40X() throws Exception {
+        // Given
+        final String customerId = "x123456";
+        final UUID goodId = UUID.randomUUID();
+
+        // When
+        var result = mockMvc.perform(post("/customer/basket/{shelf-good-id}", goodId)
+                .header("x-bullish-customer-id", customerId)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+
+            // Then
+            .andExpect(status().isBadRequest())
+            .andReturn();
+
+        Optional<BasketEntity> actualBasket = basketRepository.findByCustomerId(customerId);
+        assertAll(
+            () -> assertThat(actualBasket).isNotPresent()
+        );
+    }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -58,5 +59,12 @@ public class ProductShelfServiceImpl implements ProductShelfService {
         return shelfGoodEntities.stream()
             .map(productMapper::shelfGoodEntityToDto)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ShelfGoodDto> findGood(String shelfGoodId) {
+        return shelfRepository.findById(
+            UUID.fromString(shelfGoodId)
+        ).map(productMapper::shelfGoodEntityToDto);
     }
 }
