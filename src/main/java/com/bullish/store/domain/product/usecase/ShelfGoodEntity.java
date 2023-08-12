@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "shelf_good", indexes = {
-    @Index(name = "idx_product_id", columnList = "product_id", unique = true)
+    @Index(name = "idx_shelf_good_product_id", columnList = "product_id", unique = true)
 })
 public class ShelfGoodEntity {
     @Id
