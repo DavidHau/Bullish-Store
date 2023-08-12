@@ -87,9 +87,9 @@ class CheckOutServiceTest {
         BigDecimal.valueOf(99.9)
     );
     private final BasketDto BASKET_1 = new BasketDto(BASKET_ID_1, CUSTOMER_ID_1, List.of(
-        new LineItemDto("0", SHELF_GOOD_1.getId(), SHELF_GOOD_1.getProduct().getProductId()),
-        new LineItemDto("1", SHELF_GOOD_2.getId(), SHELF_GOOD_2.getProduct().getProductId()),
-        new LineItemDto("2", SHELF_GOOD_3.getId(), SHELF_GOOD_3.getProduct().getProductId())
+        new LineItemDto("0", SHELF_GOOD_1.getShelfGoodId(), SHELF_GOOD_1.getProduct().getProductId()),
+        new LineItemDto("1", SHELF_GOOD_2.getShelfGoodId(), SHELF_GOOD_2.getProduct().getProductId()),
+        new LineItemDto("2", SHELF_GOOD_3.getShelfGoodId(), SHELF_GOOD_3.getProduct().getProductId())
     ));
 
     private final DiscountRatioDto GLOBAL_DISCOUNT_2ND_ITEM_40_PC_OFF = new DiscountRatioDto("DISCOUNT_ID_1",
@@ -99,9 +99,9 @@ class CheckOutServiceTest {
     void setup() {
         checkOutService =
             new CheckOutServiceImpl(checkOutPurchaseDomainApi, checkOutProductDomainApi, checkOutAdjustmentDomainApi);
-        doReturn(Optional.of(SHELF_GOOD_1)).when(productShelfService).findGood(SHELF_GOOD_1.getId());
-        doReturn(Optional.of(SHELF_GOOD_2)).when(productShelfService).findGood(SHELF_GOOD_2.getId());
-        doReturn(Optional.of(SHELF_GOOD_3)).when(productShelfService).findGood(SHELF_GOOD_3.getId());
+        doReturn(Optional.of(SHELF_GOOD_1)).when(productShelfService).findGood(SHELF_GOOD_1.getShelfGoodId());
+        doReturn(Optional.of(SHELF_GOOD_2)).when(productShelfService).findGood(SHELF_GOOD_2.getShelfGoodId());
+        doReturn(Optional.of(SHELF_GOOD_3)).when(productShelfService).findGood(SHELF_GOOD_3.getShelfGoodId());
 
         doReturn(Optional.of(BASKET_1)).when(basketManagement).getBasket(CUSTOMER_ID_1);
     }
@@ -125,10 +125,10 @@ class CheckOutServiceTest {
         final String customerId2 = "y123456";
         final String basketId2 = "BASKET_ID_2";
         final BasketDto basket2 = new BasketDto(basketId2, customerId2, List.of(
-            new LineItemDto("0", SHELF_GOOD_2.getId(), SHELF_GOOD_2.getProduct().getProductId()),
-            new LineItemDto("1", SHELF_GOOD_2.getId(), SHELF_GOOD_2.getProduct().getProductId()),
-            new LineItemDto("2", SHELF_GOOD_2.getId(), SHELF_GOOD_2.getProduct().getProductId()),
-            new LineItemDto("3", SHELF_GOOD_2.getId(), SHELF_GOOD_2.getProduct().getProductId())
+            new LineItemDto("0", SHELF_GOOD_2.getShelfGoodId(), SHELF_GOOD_2.getProduct().getProductId()),
+            new LineItemDto("1", SHELF_GOOD_2.getShelfGoodId(), SHELF_GOOD_2.getProduct().getProductId()),
+            new LineItemDto("2", SHELF_GOOD_2.getShelfGoodId(), SHELF_GOOD_2.getProduct().getProductId()),
+            new LineItemDto("3", SHELF_GOOD_2.getShelfGoodId(), SHELF_GOOD_2.getProduct().getProductId())
         ));
         doReturn(Optional.of(basket2)).when(basketManagement).getBasket(customerId2);
 
@@ -159,28 +159,28 @@ class CheckOutServiceTest {
             () -> assertThat(actualReceipt.getBasketId()).isEqualTo(basketId2),
             () -> assertThat(actualReceipt.getLineItemList()).hasSize(4)
                 .containsExactlyInAnyOrder(new ReceiptDto.LineItem(0,
-                        SHELF_GOOD_2.getId(),
+                        SHELF_GOOD_2.getShelfGoodId(),
                         SHELF_GOOD_2.getProduct().getProductId(),
                         SHELF_GOOD_2.getProduct().getName(),
                         Money.of(SHELF_GOOD_2.getBasePrice(), SHELF_GOOD_2.getCurrency()),
                         null,
                         null),
                     new ReceiptDto.LineItem(1,
-                        SHELF_GOOD_2.getId(),
+                        SHELF_GOOD_2.getShelfGoodId(),
                         SHELF_GOOD_2.getProduct().getProductId(),
                         SHELF_GOOD_2.getProduct().getName(),
                         Money.of(SHELF_GOOD_2.getBasePrice(), SHELF_GOOD_2.getCurrency()),
                         "2nd item 40% off",
                         Money.of(-2000, "HKD")   // 5000 * 40% = 2000
                     ), new ReceiptDto.LineItem(2,
-                        SHELF_GOOD_2.getId(),
+                        SHELF_GOOD_2.getShelfGoodId(),
                         SHELF_GOOD_2.getProduct().getProductId(),
                         SHELF_GOOD_2.getProduct().getName(),
                         Money.of(SHELF_GOOD_2.getBasePrice(), SHELF_GOOD_2.getCurrency()),
                         null,
                         null),
                     new ReceiptDto.LineItem(3,
-                        SHELF_GOOD_2.getId(),
+                        SHELF_GOOD_2.getShelfGoodId(),
                         SHELF_GOOD_2.getProduct().getProductId(),
                         SHELF_GOOD_2.getProduct().getName(),
                         Money.of(SHELF_GOOD_2.getBasePrice(), SHELF_GOOD_2.getCurrency()),

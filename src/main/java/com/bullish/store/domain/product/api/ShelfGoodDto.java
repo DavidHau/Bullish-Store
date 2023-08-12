@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class ShelfGoodDto {
-    private String id;
+    private String shelfGoodId;
     private ProductDto product;
     private String currency;
     private BigDecimal basePrice;

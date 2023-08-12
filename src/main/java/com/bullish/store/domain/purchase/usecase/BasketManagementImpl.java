@@ -39,7 +39,7 @@ public class BasketManagementImpl implements BasketManagement {
         lineItemRepository.save(LineItemEntity.builder()
             .basket(basketEntity)
             .productId(good.getProduct().getProductId())
-            .shelfGoodId(good.getId())
+            .shelfGoodId(good.getShelfGoodId())
             .build());
         return basketEntity.getId().toString();
     }

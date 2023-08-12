@@ -424,8 +424,9 @@ class ProductControllerComponentTest {
             });
 
         assertAll(
-            () -> assertThat(actualShelfGoods.get(0).getId()).isNotEmpty(),
-            () -> assertThat(actualShelfGoods.get(0).getId()).isEqualTo(expectedShelfGoodList.get(0).getId()),
+            () -> assertThat(actualShelfGoods.get(0).getShelfGoodId()).isNotEmpty(),
+            () -> assertThat(actualShelfGoods.get(0).getShelfGoodId()).isEqualTo(
+                expectedShelfGoodList.get(0).getShelfGoodId()),
             () -> assertThat(actualShelfGoods.get(0).getCurrency()).isNotEmpty(),
             () -> assertThat(BigDecimal.valueOf(123).compareTo(actualShelfGoods.get(0).getBasePrice())).isEqualTo(0),
             () -> assertThat(actualShelfGoods.get(0).getProduct()).isNotNull(),

@@ -138,7 +138,7 @@ class ShoppingControllerComponentTest {
             });
 
         assertAll(
-            () -> assertThat(actualShelfGoods.get(0).getId()).isEqualTo(expectedShelfGood1.getId()),
+            () -> assertThat(actualShelfGoods.get(0).getShelfGoodId()).isEqualTo(expectedShelfGood1.getShelfGoodId()),
             () -> assertThat(actualShelfGoods.get(0).getCurrency()).isEqualTo(expectedShelfGood1.getCurrency()),
             () -> assertThat(
                 actualShelfGoods.get(0).getBasePrice().compareTo(expectedShelfGood1.getBasePrice())).isEqualTo(0),
@@ -218,16 +218,16 @@ class ShoppingControllerComponentTest {
         DiscountRatioEntity discountRatio = DiscountRatioEntity.builder()
             .name("2nd iPhone 13 mini 50% off")
             .isApplyToAllProduct(false)
-            .shelfGoodId(expectedShelfGood2.getId())
+            .shelfGoodId(expectedShelfGood2.getShelfGoodId())
             .offRatio(0.5)
             .applyAtEveryNthNumberOfItem(2)
             .build();
         discountRatioRepository.save(discountRatio);
 
-        addToBasket(expectedShelfGood1.getId(), customerId);
-        addToBasket(expectedShelfGood1.getId(), customerId);
-        addToBasket(expectedShelfGood2.getId(), customerId);
-        addToBasket(expectedShelfGood2.getId(), customerId);
+        addToBasket(expectedShelfGood1.getShelfGoodId(), customerId);
+        addToBasket(expectedShelfGood1.getShelfGoodId(), customerId);
+        addToBasket(expectedShelfGood2.getShelfGoodId(), customerId);
+        addToBasket(expectedShelfGood2.getShelfGoodId(), customerId);
 
 
         // When

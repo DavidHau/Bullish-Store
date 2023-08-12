@@ -10,5 +10,6 @@ public interface ProductMapper {
     @Mapping(target = "productId", source = "id")
     ProductDto productEntityToDto(ProductEntity entity);
 
+    @Mapping(target = "shelfGoodId", source = "id")
     ShelfGoodDto shelfGoodEntityToDto(ShelfGoodEntity entity);
 }

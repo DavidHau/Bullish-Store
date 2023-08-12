@@ -31,7 +31,7 @@ public class CheckOutProductDomainApi {
             ShelfGoodDto good = shelfGoodDtoList.get(i);
             lineItemList.add(ReceiptDto.LineItem.builder()
                 .lineItemId(i)
-                .shelfId(good.getId())
+                .shelfId(good.getShelfGoodId())
                 .productId(good.getProduct().getProductId())
                 .name(good.getProduct().getName())
                 .basePrice(Money.of(good.getBasePrice(), good.getCurrency()))
