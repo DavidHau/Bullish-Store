@@ -35,4 +35,11 @@ public class ExceptionHandler {
             HttpStatus.BAD_REQUEST);
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> generateIllegalArgumentExceptionResponse(
+        IllegalArgumentException exception) {
+        return new ResponseEntity<>(exception.getMessage(),
+            HttpStatus.BAD_REQUEST);
+    }
+
 }

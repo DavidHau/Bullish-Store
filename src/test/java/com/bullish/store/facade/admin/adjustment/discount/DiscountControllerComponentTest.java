@@ -112,4 +112,38 @@ class DiscountControllerComponentTest {
             () -> assertThat(actualDiscountRatioList.get(0).getApplyAtEveryNthNumberOfItem()).isEqualTo(2)
         );
     }
+
+    @Test
+    void given_invalidRatioDiscountSetting_when_addRatioDiscount_then_return400()
+        throws Exception {
+        // Given
+        assertThat(discountRatioRepository.findAll()).isEmpty();
+
+        // When
+        var result = mockMvc.perform(post("/admin/adjustment/discount/ratio")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                        {
+                            "discountName": "Specific Item 2nd 30% off",
+                            "isApplyToAllProduct": true,
+                            "shelfGoodId": "860214ce-e83b-4315-a44c-574c59708291",
+                            "offRatio": 0.3,
+                            "applyAtEveryNthNumberOfItem": 2
+                        }
+                        """
+                )
+            )
+
+            // Then
+            .andExpect(status().isBadRequest())
+            .andReturn();
+
+        assertAll(
+            () -> assertThat(discountRatioRepository.findAll()).isEmpty(),
+            () -> assertThat(result.getResponse().getContentAsString())
+                .contains("Discount with specified shelfGoodId cannot be applied to all product")
+        );
+    }
+
 }
