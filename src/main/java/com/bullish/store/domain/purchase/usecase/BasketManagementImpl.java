@@ -3,9 +3,14 @@ package com.bullish.store.domain.purchase.usecase;
 import com.bullish.store.common.exception.ProductNotFoundException;
 import com.bullish.store.domain.product.api.ProductShelfService;
 import com.bullish.store.domain.product.api.ShelfGoodDto;
+import com.bullish.store.domain.purchase.api.BasketDto;
 import com.bullish.store.domain.purchase.api.BasketManagement;
+import com.bullish.store.domain.purchase.api.LineItemDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -40,4 +45,26 @@ public class BasketManagementImpl implements BasketManagement {
     }
 
     // TODO: after removing all items, auto delete basket
+
+
+    @Override
+    public Optional<BasketDto> getBasket(String customerId) {
+        Optional<BasketEntity> basketEntityOptional = basketRepository.findByCustomerId(customerId);
+        if (basketEntityOptional.isEmpty()) {
+            return Optional.empty();
+        }
+        BasketEntity basketEntity = basketEntityOptional.get();
+        List<LineItemEntity> lineItems = lineItemRepository.findAllByBasket(basketEntity);
+
+        return Optional.of(new BasketDto(
+            basketEntity.getId().toString(),
+            basketEntity.getCustomerId(),
+            lineItems.stream()
+                .map(item -> new LineItemDto(item.getId().toString(),
+                    item.getShelfGoodId(),
+                    item.getProductId()))
+                .toList()
+        ));
+    }
+
 }

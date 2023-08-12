@@ -1,5 +1,7 @@
 package com.bullish.store.domain.purchase.api;
 
+import java.util.Optional;
+
 public interface BasketManagement {
 
     /**
@@ -9,4 +11,5 @@ public interface BasketManagement {
      */
     String addShelfGoodToBasket(String customerId, String shelfGoodId);
 
+    Optional<BasketDto> getBasket(String customerId);
 }
