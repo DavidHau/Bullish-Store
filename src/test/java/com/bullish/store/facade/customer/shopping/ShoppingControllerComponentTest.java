@@ -1,5 +1,7 @@
 package com.bullish.store.facade.customer.shopping;
 
+import com.bullish.store.domain.adjustment.usecase.DiscountRatioEntity;
+import com.bullish.store.domain.adjustment.usecase.DiscountRatioRepository;
 import com.bullish.store.domain.product.api.ProductDto;
 import com.bullish.store.domain.product.api.ProductManagement;
 import com.bullish.store.domain.product.api.ProductShelfService;
@@ -22,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +62,9 @@ class ShoppingControllerComponentTest {
     @Autowired
     private ProductShelfService shelfService;
 
+    @Autowired
+    DiscountRatioRepository discountRatioRepository;
+
     private final ObjectMapper mapper = new ObjectMapper();
 
     private final ProductEntity ON_SALE_PRODUCT_1 = ProductEntity.builder()
@@ -79,6 +85,7 @@ class ShoppingControllerComponentTest {
 
     @BeforeEach
     void setup() {
+        discountRatioRepository.deleteAll();
         lineItemRepository.deleteAll();
         basketRepository.deleteAll();
         shelfRepository.deleteAll();
@@ -195,4 +202,71 @@ class ShoppingControllerComponentTest {
         );
     }
 
+    @Test
+    void given_buy4ProductsWithOneDiscount_when_getReceipt_then_returnItemsWithDiscountCalculated() throws Exception {
+        // Given
+        final String customerId = "x123456";
+        ShelfGoodDto expectedShelfGood1 =
+            new ShelfGoodDto(shelfRepository.findByProductId(ON_SALE_PRODUCT_1.getId()).get().getId().toString(),
+                getDto(ON_SALE_PRODUCT_1), PRODUCT_PRICE_1.getCurrency().toString(),
+                PRODUCT_PRICE_1.getNumberStripped());
+        ShelfGoodDto expectedShelfGood2 =
+            new ShelfGoodDto(shelfRepository.findByProductId(ON_SALE_PRODUCT_2.getId()).get().getId().toString(),
+                getDto(ON_SALE_PRODUCT_2), PRODUCT_PRICE_2.getCurrency().toString(),
+                PRODUCT_PRICE_2.getNumberStripped());
+
+        DiscountRatioEntity discountRatio = DiscountRatioEntity.builder()
+            .name("2nd iPhone 13 mini 50% off")
+            .isApplyToAllProduct(false)
+            .shelfGoodId(expectedShelfGood2.getId())
+            .offRatio(0.5)
+            .applyAtEveryNthNumberOfItem(2)
+            .build();
+        discountRatioRepository.save(discountRatio);
+
+        addToBasket(expectedShelfGood1.getId(), customerId);
+        addToBasket(expectedShelfGood1.getId(), customerId);
+        addToBasket(expectedShelfGood2.getId(), customerId);
+        addToBasket(expectedShelfGood2.getId(), customerId);
+
+
+        // When
+        var result = mockMvc.perform(get("/customer/basket/receipt")
+                .header("x-bullish-customer-id", customerId)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+
+            // Then
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.customerId").value(customerId))
+            .andExpect(jsonPath("$.basketId").isNotEmpty())
+            .andExpect(jsonPath("$.currency").value("HKD"))
+            .andExpect(jsonPath("$.lineItemList").isArray())
+            .andExpect(jsonPath("$.lineItemList", hasSize(4)))
+            .andExpect(jsonPath("$.lineItemList[0].name").value("iPhone XR"))
+            .andExpect(jsonPath("$.lineItemList[0].discountName").doesNotExist())
+            .andExpect(jsonPath("$.lineItemList[0].discountedAmount").doesNotExist())
+            .andExpect(jsonPath("$.lineItemList[1].name").value("iPhone XR"))
+            .andExpect(jsonPath("$.lineItemList[1].discountName").doesNotExist())
+            .andExpect(jsonPath("$.lineItemList[1].discountedAmount").doesNotExist())
+            .andExpect(jsonPath("$.lineItemList[2].name").value("iPhone 13 mini"))
+            .andExpect(jsonPath("$.lineItemList[2].discountName").doesNotExist())
+            .andExpect(jsonPath("$.lineItemList[2].discountedAmount").doesNotExist())
+            .andExpect(jsonPath("$.lineItemList[3].name").value("iPhone 13 mini"))
+            .andExpect(jsonPath("$.lineItemList[3].discountName").value("2nd iPhone 13 mini 50% off"))
+            .andExpect(jsonPath("$.lineItemList[3].discountedAmount").value(-3499.95))
+            .andExpect(jsonPath("$.totalBasePrice").value(23999.8))
+            .andExpect(jsonPath("$.totalDiscount").value(-3499.95))
+            .andExpect(jsonPath("$.totalPrice").value(20499.85))
+            .andReturn();
+    }
+
+    MvcResult addToBasket(String goodId, String customerId) throws Exception {
+        return mockMvc.perform(post("/customer/basket/{shelf-good-id}", goodId)
+                .header("x-bullish-customer-id", customerId)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNoContent())
+            .andReturn();
+    }
 }

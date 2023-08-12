@@ -76,7 +76,8 @@ public class CheckOutServiceImpl implements CheckOutService {
             Map<String, Integer> theNthMatchItemMap = new HashMap<>();
 
             for (ReceiptDto.LineItem good : goods) {
-                boolean isDiscountApplicable = ratioDiscount.isApplyToAllProduct();
+                boolean isDiscountApplicable =
+                    ratioDiscount.isApplyToAllProduct() || good.getShelfId().equals(ratioDiscount.getShelfGoodId());
                 if (!isDiscountApplicable) {
                     continue;
                 }

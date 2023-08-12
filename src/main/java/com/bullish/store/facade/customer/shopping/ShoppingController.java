@@ -40,4 +40,13 @@ public class ShoppingController {
         shoppingService.addToBasket(customerId, shelfGoodId);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Get Basket Receipt")
+    @GetMapping("/basket/receipt")
+    public ResponseEntity<BasketReceiptDto> getReceipt(
+        @RequestHeader("x-bullish-customer-id") String customerId
+    ) {
+        BasketReceiptDto receipt = shoppingService.getReceipt(customerId);
+        return ResponseEntity.ok(receipt);
+    }
 }
