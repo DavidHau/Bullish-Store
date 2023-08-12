@@ -35,6 +35,8 @@ public class ShoppingService {
     }
 
     public BasketReceiptDto getReceipt(String customerId) {
-        return shoppingMapper.receiptDtoToBasketReceiptDto(checkOutService.getReceipt(customerId));
+        return checkOutService.getReceipt(customerId)
+            .map(shoppingMapper::receiptDtoToBasketReceiptDto)
+            .orElse(new BasketReceiptDto());
     }
 }

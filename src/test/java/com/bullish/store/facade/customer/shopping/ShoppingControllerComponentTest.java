@@ -269,4 +269,23 @@ class ShoppingControllerComponentTest {
             .andExpect(status().isNoContent())
             .andReturn();
     }
+
+    @Test
+    void given_noProductNoBasket_when_getReceipt_then_return200AndNoBody() throws Exception {
+        // Given
+        final String customerId = "x123456";
+
+        // When
+        var result = mockMvc.perform(get("/customer/basket/receipt")
+                .header("x-bullish-customer-id", customerId)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+
+            // Then
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.customerId").isEmpty())
+            .andExpect(jsonPath("$.basketId").isEmpty())
+            .andReturn();
+    }
+
 }

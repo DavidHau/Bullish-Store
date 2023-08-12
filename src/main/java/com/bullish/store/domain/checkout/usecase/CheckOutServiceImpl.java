@@ -12,10 +12,7 @@ import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Transactional
@@ -36,8 +33,13 @@ public class CheckOutServiceImpl implements CheckOutService {
     }
 
     @Override
-    public ReceiptDto getReceipt(String customerId) {
-        BasketDto basket = checkOutPurchaseDomainApi.getBasket(customerId);
+    public Optional<ReceiptDto> getReceipt(String customerId) {
+        Optional<BasketDto> basketOptional = checkOutPurchaseDomainApi.getBasket(customerId);
+        if (basketOptional.isEmpty()) {
+            return Optional.empty();
+        }
+        BasketDto basket = basketOptional.get();
+
         List<String> shelfGoodIdList = basket.getLineItemList().stream()
             .map(LineItemDto::getShelfId)
             .toList();
@@ -66,7 +68,7 @@ public class CheckOutServiceImpl implements CheckOutService {
             .totalPrice(totalPrice)
             .build();
 
-        return receipt;
+        return Optional.of(receipt);
     }
 
     private void applyAllAutoApplyDiscount(List<ReceiptDto.LineItem> goods) {

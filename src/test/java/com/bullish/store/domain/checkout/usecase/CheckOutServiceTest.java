@@ -108,7 +108,7 @@ class CheckOutServiceTest {
 
     @Test
     void given_basketContains3items_when_getReceipt_then_returnWithTotalPriceCalculated() {
-        ReceiptDto actualReceipt = checkOutService.getReceipt(CUSTOMER_ID_1);
+        ReceiptDto actualReceipt = checkOutService.getReceipt(CUSTOMER_ID_1).get();
 
         assertAll(
             () -> assertThat(actualReceipt.getCustomerId()).isEqualTo(CUSTOMER_ID_1),
@@ -134,7 +134,7 @@ class CheckOutServiceTest {
 
 
         // When
-        ReceiptDto actualReceipt = checkOutService.getReceipt(customerId2);
+        ReceiptDto actualReceipt = checkOutService.getReceipt(customerId2).get();
 
         // Then
         /*

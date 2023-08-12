@@ -1,6 +1,8 @@
 package com.bullish.store.domain.checkout.api;
 
+import java.util.Optional;
+
 public interface CheckOutService {
-    ReceiptDto getReceipt(String customerId);
+    Optional<ReceiptDto> getReceipt(String customerId);
 
 }

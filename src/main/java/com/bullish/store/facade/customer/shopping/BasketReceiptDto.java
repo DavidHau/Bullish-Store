@@ -1,5 +1,6 @@
 package com.bullish.store.facade.customer.shopping;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -26,6 +27,7 @@ public class BasketReceiptDto {
     @Setter
     @Builder
     @EqualsAndHashCode
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class LineItem {
         private int lineItemId;
         private String shelfId;
