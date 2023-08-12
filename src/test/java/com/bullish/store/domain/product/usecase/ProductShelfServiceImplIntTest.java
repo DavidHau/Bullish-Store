@@ -26,8 +26,8 @@ class ProductShelfServiceImplIntTest {
 
     @BeforeEach
     void setup() {
-        productRepository.deleteAll();
         shelfRepository.deleteAll();
+        productRepository.deleteAll();
     }
 
     private List<ProductEntity> prepareDefaultProductList() {
