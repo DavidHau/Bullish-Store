@@ -29,13 +29,16 @@ public class CheckOutProductDomainApi {
         List<ReceiptDto.LineItem> lineItemList = new ArrayList<>();
         for (int i = 0; i < shelfGoodDtoList.size(); i++) {
             ShelfGoodDto good = shelfGoodDtoList.get(i);
-            lineItemList.add(new ReceiptDto.LineItem(
-                i,
-                good.getId(),
-                good.getProduct().getProductId(),
-                good.getProduct().getName(),
-                Money.of(good.getBasePrice(), good.getCurrency())
-            ));
+            lineItemList.add(ReceiptDto.LineItem.builder()
+                .lineItemId(i)
+                .shelfId(good.getId())
+                .productId(good.getProduct().getProductId())
+                .name(good.getProduct().getName())
+                .basePrice(Money.of(good.getBasePrice(), good.getCurrency()))
+                .discountName(null)
+                .discountedAmount(null)
+                .build()
+            );
         }
         return lineItemList;
     }
