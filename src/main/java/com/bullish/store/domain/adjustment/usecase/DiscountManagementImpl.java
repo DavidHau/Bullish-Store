@@ -2,6 +2,7 @@ package com.bullish.store.domain.adjustment.usecase;
 
 
 import com.bullish.store.domain.adjustment.api.AdjustmentMapper;
+import com.bullish.store.domain.adjustment.api.DiscountAmountDto;
 import com.bullish.store.domain.adjustment.api.DiscountManagement;
 import com.bullish.store.domain.adjustment.api.DiscountRatioDto;
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -19,8 +21,6 @@ public class DiscountManagementImpl implements DiscountManagement {
     private final DiscountAmountRepository discountAmountRepository;
     private final AdjustmentMapper adjustmentMapper = Mappers.getMapper(AdjustmentMapper.class);
 
-    // TODO: add exact amount discount (also handle discount higher absolute value then price case(round up to 0)
-    // if discount amount > price, discount = negate price
     public DiscountManagementImpl(
         DiscountRatioRepository discountRatioRepository,
         DiscountAmountRepository discountAmountRepository
@@ -68,6 +68,11 @@ public class DiscountManagementImpl implements DiscountManagement {
             .stream()
             .map(adjustmentMapper::discountRatioEntityToDto)
             .toList();
+    }
+
+    @Override
+    public List<DiscountAmountDto> getAllAutoApplyAmountDiscount() {
+        return Collections.emptyList();
     }
 
 

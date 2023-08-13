@@ -21,7 +21,7 @@ public interface DiscountManagement {
 
     List<DiscountRatioDto> getAllAutoApplyRatioDiscount();
 
-    // TODO get all auto apply amount discount
+    List<DiscountAmountDto> getAllAutoApplyAmountDiscount();
 
     // TODO get all discounts
 

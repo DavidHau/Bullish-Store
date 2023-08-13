@@ -11,6 +11,10 @@ import lombok.experimental.SuperBuilder;
 @Data
 @EqualsAndHashCode
 @SuperBuilder(toBuilder = true)
-public class DiscountRatioDto extends DiscountDto {
-    private double offRatio;
+public abstract class DiscountDto {
+    private String id;
+    private String name;
+    private String shelfGoodId;
+    private boolean isApplyToAllProduct;
+    private int applyAtEveryNthNumberOfItem;
 }

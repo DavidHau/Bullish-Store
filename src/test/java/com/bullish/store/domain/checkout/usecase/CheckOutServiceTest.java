@@ -1,5 +1,6 @@
 package com.bullish.store.domain.checkout.usecase;
 
+import com.bullish.store.domain.adjustment.api.DiscountAmountDto;
 import com.bullish.store.domain.adjustment.api.DiscountManagement;
 import com.bullish.store.domain.adjustment.api.DiscountRatioDto;
 import com.bullish.store.domain.checkout.api.ReceiptDto;
@@ -92,8 +93,21 @@ class CheckOutServiceTest {
         new LineItemDto("2", SHELF_GOOD_3.getShelfGoodId(), SHELF_GOOD_3.getProduct().getProductId())
     ));
 
-    private final DiscountRatioDto GLOBAL_DISCOUNT_2ND_ITEM_40_PC_OFF = new DiscountRatioDto("DISCOUNT_ID_1",
-        "2nd item 40% off", null, true, 0.4, 2);
+    private final DiscountRatioDto GLOBAL_DISCOUNT_2ND_ITEM_40_PC_OFF = DiscountRatioDto.builder()
+        .id("RATIO_DISCOUNT_ID_1")
+        .name("2nd item 40% off")
+        .shelfGoodId(null)
+        .isApplyToAllProduct(true)
+        .applyAtEveryNthNumberOfItem(2)
+        .offRatio(0.4).build();
+    private final DiscountAmountDto GLOBAL_DISCOUNT_2ND_ITEM_500_DOLLARS_OFF = DiscountAmountDto.builder()
+        .id("AMOUNT_DISCOUNT_ID_1")
+        .name("2nd item $500 off")
+        .shelfGoodId(null)
+        .isApplyToAllProduct(true)
+        .applyAtEveryNthNumberOfItem(2)
+        .currency("HKD")
+        .discountAmount(BigDecimal.valueOf(500)).build();
 
     @BeforeEach
     void setup() {
@@ -131,7 +145,6 @@ class CheckOutServiceTest {
             new LineItemDto("3", SHELF_GOOD_2.getShelfGoodId(), SHELF_GOOD_2.getProduct().getProductId())
         ));
         doReturn(Optional.of(basket2)).when(basketManagement).getBasket(customerId2);
-
 
         // When
         ReceiptDto actualReceipt = checkOutService.getReceipt(customerId2).get();
@@ -194,4 +207,79 @@ class CheckOutServiceTest {
         );
     }
 
+    @Test
+    void given_2ndItem500DollarsOffDiscount_when_buy4IdenticalProduct_then_generateReceiptWithDiscountTwice() {
+        // Given
+        doReturn(List.of(GLOBAL_DISCOUNT_2ND_ITEM_500_DOLLARS_OFF)).when(discountManagement)
+            .getAllAutoApplyAmountDiscount();
+        final String customerId2 = "y123456";
+        final String basketId2 = "BASKET_ID_2";
+        final BasketDto basket2 = new BasketDto(basketId2, customerId2, List.of(
+            new LineItemDto("0", SHELF_GOOD_2.getShelfGoodId(), SHELF_GOOD_2.getProduct().getProductId()),
+            new LineItemDto("1", SHELF_GOOD_2.getShelfGoodId(), SHELF_GOOD_2.getProduct().getProductId()),
+            new LineItemDto("2", SHELF_GOOD_2.getShelfGoodId(), SHELF_GOOD_2.getProduct().getProductId()),
+            new LineItemDto("3", SHELF_GOOD_2.getShelfGoodId(), SHELF_GOOD_2.getProduct().getProductId())
+        ));
+        doReturn(Optional.of(basket2)).when(basketManagement).getBasket(customerId2);
+
+        // When
+        ReceiptDto actualReceipt = checkOutService.getReceipt(customerId2).get();
+
+        // Then
+        /*
+            iPhone XR        $5000
+
+            iPhone XR        $5000
+                  2nd item $500 off
+                  discount  ($500)
+
+            iPhone XR        $5000
+
+            iPhone XR        $5000
+                  2nd item $500 off
+                  discount  ($500)
+
+            Total Base Price $20000
+            Total Discount  ($1000)
+            Total Price      $19000
+         */
+        assertAll(
+            () -> assertThat(actualReceipt.getCustomerId()).isEqualTo(customerId2),
+            () -> assertThat(actualReceipt.getBasketId()).isEqualTo(basketId2),
+            () -> assertThat(actualReceipt.getLineItemList()).hasSize(4)
+                .containsExactlyInAnyOrder(new ReceiptDto.LineItem(0,
+                        SHELF_GOOD_2.getShelfGoodId(),
+                        SHELF_GOOD_2.getProduct().getProductId(),
+                        SHELF_GOOD_2.getProduct().getName(),
+                        Money.of(SHELF_GOOD_2.getBasePrice(), SHELF_GOOD_2.getCurrency()),
+                        null,
+                        null),
+                    new ReceiptDto.LineItem(1,
+                        SHELF_GOOD_2.getShelfGoodId(),
+                        SHELF_GOOD_2.getProduct().getProductId(),
+                        SHELF_GOOD_2.getProduct().getName(),
+                        Money.of(SHELF_GOOD_2.getBasePrice(), SHELF_GOOD_2.getCurrency()),
+                        "2nd item $500 off",
+                        Money.of(-500, "HKD")
+                    ), new ReceiptDto.LineItem(2,
+                        SHELF_GOOD_2.getShelfGoodId(),
+                        SHELF_GOOD_2.getProduct().getProductId(),
+                        SHELF_GOOD_2.getProduct().getName(),
+                        Money.of(SHELF_GOOD_2.getBasePrice(), SHELF_GOOD_2.getCurrency()),
+                        null,
+                        null),
+                    new ReceiptDto.LineItem(3,
+                        SHELF_GOOD_2.getShelfGoodId(),
+                        SHELF_GOOD_2.getProduct().getProductId(),
+                        SHELF_GOOD_2.getProduct().getName(),
+                        Money.of(SHELF_GOOD_2.getBasePrice(), SHELF_GOOD_2.getCurrency()),
+                        "2nd item $500 off",
+                        Money.of(-500, "HKD")
+                    )),
+
+            () -> assertThat(actualReceipt.getTotalBasePrice()).isEqualTo(Money.of(20000, "HKD")),
+            () -> assertThat(actualReceipt.getTotalDiscount()).isEqualTo(Money.of(-1000, "HKD")),
+            () -> assertThat(actualReceipt.getTotalPrice()).isEqualTo(Money.of(19000, "HKD"))
+        );
+    }
 }

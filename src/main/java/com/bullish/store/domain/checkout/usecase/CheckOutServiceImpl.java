@@ -1,5 +1,7 @@
 package com.bullish.store.domain.checkout.usecase;
 
+import com.bullish.store.domain.adjustment.api.DiscountAmountDto;
+import com.bullish.store.domain.adjustment.api.DiscountDto;
 import com.bullish.store.domain.adjustment.api.DiscountRatioDto;
 import com.bullish.store.domain.checkout.api.CheckOutService;
 import com.bullish.store.domain.checkout.api.ReceiptDto;
@@ -72,33 +74,50 @@ public class CheckOutServiceImpl implements CheckOutService {
     }
 
     private void applyAllAutoApplyDiscount(List<ReceiptDto.LineItem> goods) {
+        List<DiscountAmountDto> allAutoApplyAmountDiscount =
+            checkOutAdjustmentDomainApi.getAllAutoApplyAmountDiscount();
         List<DiscountRatioDto> allAutoApplyRatioDiscount = checkOutAdjustmentDomainApi.getAllAutoApplyRatioDiscount();
 
-        for (DiscountRatioDto ratioDiscount : allAutoApplyRatioDiscount) {
-            Map<String, Integer> theNthMatchItemMap = new HashMap<>();
+        for (DiscountDto discount : allAutoApplyAmountDiscount) {
+            applyDiscountToLineItems(goods, discount);
+        }
 
-            for (ReceiptDto.LineItem good : goods) {
-                boolean isDiscountApplicable =
-                    ratioDiscount.isApplyToAllProduct() || good.getShelfId().equals(ratioDiscount.getShelfGoodId());
-                if (!isDiscountApplicable) {
-                    continue;
-                }
-                final String matchCountKey = good.getShelfId();
-                final int originalMatchCount = theNthMatchItemMap.getOrDefault(matchCountKey, 0);
-                final int currentMatchCount = originalMatchCount + 1;
-                theNthMatchItemMap.put(matchCountKey, currentMatchCount);
-                if (ratioDiscount.getApplyAtEveryNthNumberOfItem() == currentMatchCount) {
-                    applyDiscount(good, ratioDiscount);
-                    theNthMatchItemMap.put(matchCountKey, 0);
-                }
-            }
-
+        for (DiscountDto discount : allAutoApplyRatioDiscount) {
+            applyDiscountToLineItems(goods, discount);
         }
     }
 
-    private void applyDiscount(ReceiptDto.LineItem good, DiscountRatioDto ratioDiscount) {
-        Money discountAmount = good.getBasePrice().multiply(ratioDiscount.getOffRatio()).negate();
-        good.setDiscountName(ratioDiscount.getName());
-        good.setDiscountedAmount(discountAmount);
+    private void applyDiscountToLineItems(List<ReceiptDto.LineItem> goods, DiscountDto discount) {
+        Map<String, Integer> theNthMatchItemMap = new HashMap<>();
+
+        for (ReceiptDto.LineItem good : goods) {
+            boolean isDiscountApplicable =
+                discount.isApplyToAllProduct() || good.getShelfId().equals(discount.getShelfGoodId());
+            if (!isDiscountApplicable) {
+                continue;
+            }
+            final String matchCountKey = good.getShelfId();
+            final int originalMatchCount = theNthMatchItemMap.getOrDefault(matchCountKey, 0);
+            final int currentMatchCount = originalMatchCount + 1;
+            theNthMatchItemMap.put(matchCountKey, currentMatchCount);
+            if (discount.getApplyAtEveryNthNumberOfItem() == currentMatchCount) {
+                applyDiscount(good, discount);
+                theNthMatchItemMap.put(matchCountKey, 0);
+            }
+        }
+    }
+
+    private void applyDiscount(ReceiptDto.LineItem good, DiscountDto discount) {
+        if (discount instanceof DiscountRatioDto ratioDiscount) {
+            Money discountAmount = good.getBasePrice().multiply(ratioDiscount.getOffRatio()).negate();
+            good.setDiscountName(ratioDiscount.getName());
+            good.setDiscountedAmount(discountAmount);
+        } else if (discount instanceof DiscountAmountDto amountDiscount) {
+            Money maxDiscountAmount = Money.of(amountDiscount.getDiscountAmount(), amountDiscount.getCurrency());
+            Money discountAmount = good.getBasePrice().isGreaterThan(maxDiscountAmount) ? maxDiscountAmount :
+                good.getBasePrice();
+            good.setDiscountName(amountDiscount.getName());
+            good.setDiscountedAmount(discountAmount.negate());
+        }
     }
 }

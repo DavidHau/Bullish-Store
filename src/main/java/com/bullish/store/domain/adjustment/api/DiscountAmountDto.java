@@ -6,11 +6,14 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode
 @SuperBuilder(toBuilder = true)
-public class DiscountRatioDto extends DiscountDto {
-    private double offRatio;
+public class DiscountAmountDto extends DiscountDto {
+    private String currency;
+    private BigDecimal discountAmount;
 }
