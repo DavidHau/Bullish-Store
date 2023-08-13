@@ -3,6 +3,7 @@ package com.bullish.store.domain.adjustment.api;
 
 import org.javamoney.moneta.Money;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface DiscountManagement {
@@ -40,5 +41,21 @@ public interface DiscountManagement {
         Money discountAmount,
         int applyAtEveryNthNumberOfItem
     ) {
+        public CreateAmountDiscountRequest(
+            String discountName,
+            boolean isApplyToAllProduct,
+            String shelfGoodId,
+            String currency,
+            BigDecimal discountAmount,
+            int applyAtEveryNthNumberOfItem
+        ) {
+            this(
+                discountName,
+                isApplyToAllProduct,
+                shelfGoodId,
+                Money.of(discountAmount, currency),
+                applyAtEveryNthNumberOfItem
+            );
+        }
     }
 }
