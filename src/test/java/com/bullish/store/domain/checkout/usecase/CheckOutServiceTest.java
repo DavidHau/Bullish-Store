@@ -97,14 +97,14 @@ class CheckOutServiceTest {
         .id("RATIO_DISCOUNT_ID_1")
         .name("2nd item 40% off")
         .shelfGoodId(null)
-        .isApplyToAllProduct(true)
+        .applyToAllProduct(true)
         .applyAtEveryNthNumberOfItem(2)
         .offRatio(0.4).build();
     private final DiscountAmountDto GLOBAL_DISCOUNT_2ND_ITEM_500_DOLLARS_OFF = DiscountAmountDto.builder()
         .id("AMOUNT_DISCOUNT_ID_1")
         .name("2nd item $500 off")
         .shelfGoodId(null)
-        .isApplyToAllProduct(true)
+        .applyToAllProduct(true)
         .applyAtEveryNthNumberOfItem(2)
         .currency("HKD")
         .discountAmount(BigDecimal.valueOf(500)).build();

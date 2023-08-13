@@ -225,7 +225,7 @@ class ShoppingControllerComponentTest {
 
         DiscountRatioEntity discountRatio = DiscountRatioEntity.builder()
             .name("2nd iPhone 13 mini 50% off")
-            .isApplyToAllProduct(false)
+            .applyToAllProduct(false)
             .shelfGoodId(expectedShelfGood2.getShelfGoodId())
             .offRatio(0.5)
             .applyAtEveryNthNumberOfItem(2)
@@ -285,7 +285,7 @@ class ShoppingControllerComponentTest {
 
         DiscountAmountEntity discountAmount = DiscountAmountEntity.builder()
             .name("2nd iPhone $8000 off")
-            .isApplyToAllProduct(false)
+            .applyToAllProduct(false)
             .shelfGoodId(expectedShelfGood2.getShelfGoodId())
             .currency("HKD")
             .discountAmount(BigDecimal.valueOf(8000))

@@ -30,7 +30,7 @@ class DiscountRatioRepositoryIntTest {
         final String shelfGoodId = UUID.randomUUID().toString();
         DiscountRatioEntity discountRatio = DiscountRatioEntity.builder()
             .name("My Discount")
-            .isApplyToAllProduct(true)
+            .applyToAllProduct(true)
             .shelfGoodId(shelfGoodId)
             .offRatio(0.3)
             .applyAtEveryNthNumberOfItem(applyAtEveryNthNumberOfItem)
@@ -58,7 +58,7 @@ class DiscountRatioRepositoryIntTest {
         final String shelfGoodId = UUID.randomUUID().toString();
         DiscountRatioEntity discountRatio = DiscountRatioEntity.builder()
             .name("My Discount")
-            .isApplyToAllProduct(true)
+            .applyToAllProduct(true)
             .shelfGoodId(shelfGoodId)
             .offRatio(0.3)
             .build();

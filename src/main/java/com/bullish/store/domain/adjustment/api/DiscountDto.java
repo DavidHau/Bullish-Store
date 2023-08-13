@@ -15,6 +15,6 @@ public abstract class DiscountDto {
     private String id;
     private String name;
     private String shelfGoodId;
-    private boolean isApplyToAllProduct;
+    private boolean applyToAllProduct;
     private int applyAtEveryNthNumberOfItem;
 }

@@ -29,7 +29,7 @@ class DiscountAmountRepositoryIntTest {
         final String shelfGoodId = UUID.randomUUID().toString();
         DiscountAmountEntity discountAmount = DiscountAmountEntity.builder()
             .name("My Discount")
-            .isApplyToAllProduct(true)
+            .applyToAllProduct(true)
             .shelfGoodId(shelfGoodId)
             .currency("HKD")
             .discountAmount(BigDecimal.valueOf(20.2))

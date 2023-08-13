@@ -27,7 +27,7 @@ public abstract class DiscountEntity {
     private String shelfGoodId;
 
     @Column(nullable = false)
-    private boolean isApplyToAllProduct;
+    private boolean applyToAllProduct;
 
     @Builder.Default
     @Column(nullable = false)

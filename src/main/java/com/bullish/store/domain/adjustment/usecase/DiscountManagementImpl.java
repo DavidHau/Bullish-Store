@@ -37,7 +37,7 @@ public class DiscountManagementImpl implements DiscountManagement {
         DiscountRatioEntity discountEntity = discountRatioRepository.save(DiscountRatioEntity.builder()
             .name(request.discountName())
             .shelfGoodId(request.shelfGoodId())
-            .isApplyToAllProduct(request.isApplyToAllProduct())
+            .applyToAllProduct(request.isApplyToAllProduct())
             .offRatio(request.offRatio())
             .applyAtEveryNthNumberOfItem(request.applyAtEveryNthNumberOfItem())
             .build());
@@ -53,7 +53,7 @@ public class DiscountManagementImpl implements DiscountManagement {
         DiscountAmountEntity discountEntity = discountAmountRepository.save(DiscountAmountEntity.builder()
             .name(request.discountName())
             .shelfGoodId(request.shelfGoodId())
-            .isApplyToAllProduct(request.isApplyToAllProduct())
+            .applyToAllProduct(request.isApplyToAllProduct())
             .currency(request.discountAmount().getCurrency().getCurrencyCode())
             .discountAmount(request.discountAmount().abs().getNumberStripped())
             .applyAtEveryNthNumberOfItem(request.applyAtEveryNthNumberOfItem())
