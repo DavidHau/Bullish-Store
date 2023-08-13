@@ -2,6 +2,7 @@ package com.bullish.store.domain.adjustment.usecase;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -24,5 +25,12 @@ public abstract class DiscountEntity {
     private String name;
 
     private String shelfGoodId;
+
+    @Column(nullable = false)
+    private boolean isApplyToAllProduct;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private int applyAtEveryNthNumberOfItem = 1;
 
 }

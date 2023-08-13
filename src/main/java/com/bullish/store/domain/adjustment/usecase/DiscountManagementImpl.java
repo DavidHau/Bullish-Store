@@ -15,13 +15,18 @@ import java.util.List;
 @Transactional
 public class DiscountManagementImpl implements DiscountManagement {
 
-    private DiscountRatioRepository discountRatioRepository;
+    private final DiscountRatioRepository discountRatioRepository;
+    private final DiscountAmountRepository discountAmountRepository;
     private final AdjustmentMapper adjustmentMapper = Mappers.getMapper(AdjustmentMapper.class);
 
+    // TODO: add exact amount discount (also handle discount higher absolute value then price case(round up to 0)
+    // if discount amount > price, discount = negate price
     public DiscountManagementImpl(
-        DiscountRatioRepository discountRatioRepository
+        DiscountRatioRepository discountRatioRepository,
+        DiscountAmountRepository discountAmountRepository
     ) {
         this.discountRatioRepository = discountRatioRepository;
+        this.discountAmountRepository = discountAmountRepository;
     }
 
     @Override
@@ -35,6 +40,23 @@ public class DiscountManagementImpl implements DiscountManagement {
             .shelfGoodId(request.shelfGoodId())
             .isApplyToAllProduct(request.isApplyToAllProduct())
             .offRatio(request.offRatio())
+            .applyAtEveryNthNumberOfItem(request.applyAtEveryNthNumberOfItem())
+            .build());
+        return discountEntity.getId().toString();
+    }
+
+    @Override
+    public String addAmountDiscount(CreateAmountDiscountRequest request) {
+        if (request.isApplyToAllProduct() && StringUtils.isNotEmpty(request.shelfGoodId())) {
+            throw new IllegalArgumentException("Discount with specified shelfGoodId cannot be applied to all product.");
+        }
+
+        DiscountAmountEntity discountEntity = discountAmountRepository.save(DiscountAmountEntity.builder()
+            .name(request.discountName())
+            .shelfGoodId(request.shelfGoodId())
+            .isApplyToAllProduct(request.isApplyToAllProduct())
+            .currency(request.discountAmount().getCurrency().getCurrencyCode())
+            .discountAmount(request.discountAmount().getNumberStripped())
             .applyAtEveryNthNumberOfItem(request.applyAtEveryNthNumberOfItem())
             .build());
         return discountEntity.getId().toString();
