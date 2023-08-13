@@ -36,8 +36,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -206,6 +205,68 @@ class ShoppingControllerComponentTest {
         Optional<BasketEntity> actualBasket = basketRepository.findByCustomerId(customerId);
         assertAll(
             () -> assertThat(actualBasket).isNotPresent()
+        );
+    }
+
+    @Test
+    void given_multipleGoodInBasket_when_deleteGoodFromBasket_then_return204AndOnlyRemoveOneEverytime()
+        throws Exception {
+        // Given
+        final String customerId = "x123456";
+        final String shelfGoodId1 = shelfRepository.findByProductId(ON_SALE_PRODUCT_1.getId()).get().getId().toString();
+        final String shelfGoodId2 = shelfRepository.findByProductId(ON_SALE_PRODUCT_2.getId()).get().getId().toString();
+
+        addToBasket(shelfGoodId1, customerId);
+        addToBasket(shelfGoodId2, customerId);
+        addToBasket(shelfGoodId1, customerId);
+
+        Optional<BasketEntity> actualBasket = basketRepository.findByCustomerId(customerId);
+        assertAll(
+            () -> assertThat(actualBasket).isPresent(),
+            () -> assertThat(actualBasket.get().getCustomerId()).isEqualTo(customerId),
+            () -> assertThat(lineItemRepository.findAllByBasket(actualBasket.get())).hasSize(3)
+        );
+
+        // When
+        mockMvc.perform(delete("/customer/basket/{shelf-good-id}", shelfGoodId1)
+                .header("x-bullish-customer-id", customerId)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+
+            // Then
+            .andExpect(status().isNoContent())
+            .andReturn();
+
+        assertAll(
+            () -> {
+                List<LineItemEntity> actualLineItemList = lineItemRepository.findAllByBasket(actualBasket.get());
+                assertAll(
+                    () -> assertThat(actualLineItemList).hasSize(2),
+                    () -> assertThat(actualLineItemList.stream().map(LineItemEntity::getShelfGoodId))
+                        .containsExactlyInAnyOrder(shelfGoodId1, shelfGoodId2)
+                );
+            }
+        );
+
+        // When
+        mockMvc.perform(delete("/customer/basket/{shelf-good-id}", shelfGoodId2)
+                .header("x-bullish-customer-id", customerId)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+
+            // Then
+            .andExpect(status().isNoContent())
+            .andReturn();
+
+        assertAll(
+            () -> {
+                List<LineItemEntity> actualLineItemList = lineItemRepository.findAllByBasket(actualBasket.get());
+                assertAll(
+                    () -> assertThat(actualLineItemList).hasSize(1),
+                    () -> assertThat(actualLineItemList.stream().map(LineItemEntity::getShelfGoodId))
+                        .containsExactlyInAnyOrder(shelfGoodId1)
+                );
+            }
         );
     }
 

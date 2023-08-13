@@ -11,5 +11,7 @@ public interface BasketManagement {
      */
     String addShelfGoodToBasket(String customerId, String shelfGoodId);
 
+    void removeShelfGoodFromBasket(String customerId, String shelfGoodId);
+
     Optional<BasketDto> getBasket(String customerId);
 }

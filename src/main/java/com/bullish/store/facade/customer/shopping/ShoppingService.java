@@ -34,6 +34,10 @@ public class ShoppingService {
         basketManagement.addShelfGoodToBasket(customerId, shelfGoodId);
     }
 
+    public void removeFromBasket(String customerId, String shelfGoodId) {
+        basketManagement.removeShelfGoodFromBasket(customerId, shelfGoodId);
+    }
+
     public BasketReceiptDto getReceipt(String customerId) {
         return checkOutService.getReceipt(customerId)
             .map(shoppingMapper::receiptDtoToBasketReceiptDto)
