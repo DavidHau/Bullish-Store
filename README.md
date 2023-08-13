@@ -58,6 +58,10 @@ Side note:
 In DDD(Domain Drive Design) world, bounded context and autonomy are the soul. It's very important to "hide" the internal
 architecture / tech stack, in order to retain the freedom of choice.
 
+In order to ensure context root of endpoints providing to customer and admin are separated, ArchUnit is used in
+ArchitectureTest. It's also feasible to add more architecture test cases to protect architecture decisions being made by
+adding more test cases in CI/CD.
+
 ### Dependency Diagram
 
 ![dependency diagram](src/main/resources/docs/dependency_diagram.png "Dependency Diagram")
