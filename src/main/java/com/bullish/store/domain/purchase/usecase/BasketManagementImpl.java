@@ -1,11 +1,10 @@
 package com.bullish.store.domain.purchase.usecase;
 
-import com.bullish.store.common.exception.ProductNotFoundException;
-import com.bullish.store.domain.product.api.ProductShelfService;
 import com.bullish.store.domain.product.api.ShelfGoodDto;
 import com.bullish.store.domain.purchase.api.BasketDto;
 import com.bullish.store.domain.purchase.api.BasketManagement;
 import com.bullish.store.domain.purchase.api.LineItemDto;
+import com.bullish.store.domain.purchase.port.PurchaseProductDomainApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,24 +14,23 @@ import java.util.Optional;
 @Service
 @Transactional
 public class BasketManagementImpl implements BasketManagement {
-    private final ProductShelfService shelfService;
+    private final PurchaseProductDomainApi productDomainApi;
     private final BasketRepository basketRepository;
     private final LineItemRepository lineItemRepository;
 
     public BasketManagementImpl(
-        ProductShelfService shelfService,
+        PurchaseProductDomainApi productDomainApi,
         BasketRepository basketRepository,
         LineItemRepository lineItemRepository
     ) {
-        this.shelfService = shelfService;
+        this.productDomainApi = productDomainApi;
         this.basketRepository = basketRepository;
         this.lineItemRepository = lineItemRepository;
     }
 
     @Override
     public String addShelfGoodToBasket(String customerId, String shelfGoodId) {
-        ShelfGoodDto good = shelfService.findGood(shelfGoodId)
-            .orElseThrow(() -> new ProductNotFoundException("shelf good doesn't exist!"));
+        ShelfGoodDto good = productDomainApi.findGood(shelfGoodId);
         BasketEntity basketEntity = basketRepository.saveIfNotExist(BasketEntity.builder()
             .customerId(customerId)
             .build());
