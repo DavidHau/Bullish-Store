@@ -98,4 +98,47 @@ class BasketManagementIntTest {
         );
     }
 
+    @Test
+    void given_multipleBaskets_when_removeShelfGoodFromBasket_then_onlyRemoveFromTheCorrespondingCustomerBasket() {
+        // Give
+        final String customerId = "x123456";
+        basketManagement.addShelfGoodToBasket(customerId, shelfGoodId1);
+        basketManagement.addShelfGoodToBasket(customerId, shelfGoodId2);
+        basketManagement.addShelfGoodToBasket("another customer", shelfGoodId2);
+
+        // When
+        basketManagement.removeShelfGoodFromBasket(customerId, shelfGoodId2);
+
+        // Then
+        final BasketDto actualBasket = basketManagement.getBasket(customerId).orElseThrow();
+        final BasketDto anotherCustomerBasket = basketManagement.getBasket("another customer").orElseThrow();
+        assertAll(
+            () -> assertThat(actualBasket.getCustomerId()).isEqualTo(customerId),
+            () -> assertThat(actualBasket.getLineItemList()).hasSize(1),
+            () -> assertThat(actualBasket.getLineItemList().get(0).getShelfId()).isEqualTo(shelfGoodId1),
+
+            () -> assertThat(anotherCustomerBasket.getCustomerId()).isEqualTo("another customer"),
+            () -> assertThat(anotherCustomerBasket.getLineItemList()).hasSize(1),
+            () -> assertThat(anotherCustomerBasket.getLineItemList().get(0).getShelfId()).isEqualTo(shelfGoodId2)
+        );
+    }
+
+    @Test
+    void given_onlyRemainOneGoodInBasket_when_removeShelfGoodFromBasket_then_alsoRemoveBasket() {
+        // Give
+        final String customerId = "x123456";
+        basketManagement.addShelfGoodToBasket(customerId, shelfGoodId2);
+        basketManagement.addShelfGoodToBasket("another customer", shelfGoodId2);
+        assertThat(basketRepository.findByCustomerId(customerId)).isPresent();
+
+        // When
+        basketManagement.removeShelfGoodFromBasket(customerId, shelfGoodId2);
+
+        // Then
+        assertAll(
+            () -> assertThat(basketRepository.findByCustomerId(customerId)).isNotPresent(),
+            () -> assertThat(basketRepository.findByCustomerId("another customer")).isPresent()
+        );
+    }
+
 }

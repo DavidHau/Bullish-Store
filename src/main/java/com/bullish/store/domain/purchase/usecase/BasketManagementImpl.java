@@ -46,16 +46,19 @@ public class BasketManagementImpl implements BasketManagement {
 
     @Override
     public void removeShelfGoodFromBasket(String customerId, String shelfGoodId) {
-        // TODO: after removing all items, auto delete basket
-
         BasketEntity basketEntity = basketRepository.findByCustomerId(customerId)
             .orElseThrow();
         List<LineItemEntity> allItemsInBasket = lineItemRepository.findAllByBasket(basketEntity);
+        final boolean isDeletingLastItemInBasket = allItemsInBasket.size() == 1;
+
         LineItemEntity toBeRemovedLineItemEntity = allItemsInBasket.stream()
             .filter(item -> shelfGoodId.equals(item.getShelfGoodId()))
             .findFirst()
             .orElseThrow();
         lineItemRepository.delete(toBeRemovedLineItemEntity);
+        if (isDeletingLastItemInBasket) {
+            basketRepository.delete(basketEntity);
+        }
     }
 
     @Override
