@@ -10,7 +10,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -56,7 +55,7 @@ public class DiscountManagementImpl implements DiscountManagement {
             .shelfGoodId(request.shelfGoodId())
             .isApplyToAllProduct(request.isApplyToAllProduct())
             .currency(request.discountAmount().getCurrency().getCurrencyCode())
-            .discountAmount(request.discountAmount().getNumberStripped())
+            .discountAmount(request.discountAmount().abs().getNumberStripped())
             .applyAtEveryNthNumberOfItem(request.applyAtEveryNthNumberOfItem())
             .build());
         return discountEntity.getId().toString();
@@ -72,8 +71,10 @@ public class DiscountManagementImpl implements DiscountManagement {
 
     @Override
     public List<DiscountAmountDto> getAllAutoApplyAmountDiscount() {
-        return Collections.emptyList();
+        return discountAmountRepository.findAll()
+            .stream()
+            .map(adjustmentMapper::discountAmountEntityToDto)
+            .toList();
     }
-
 
 }

@@ -1,5 +1,6 @@
 package com.bullish.store.domain.adjustment.api;
 
+import com.bullish.store.domain.adjustment.usecase.DiscountAmountEntity;
 import com.bullish.store.domain.adjustment.usecase.DiscountRatioEntity;
 import org.mapstruct.Mapper;
 
@@ -7,5 +8,7 @@ import org.mapstruct.Mapper;
 public interface AdjustmentMapper {
 
     DiscountRatioDto discountRatioEntityToDto(DiscountRatioEntity entity);
+
+    DiscountAmountDto discountAmountEntityToDto(DiscountAmountEntity entity);
 
 }

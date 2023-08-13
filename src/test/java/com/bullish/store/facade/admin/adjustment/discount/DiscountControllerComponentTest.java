@@ -197,6 +197,51 @@ class DiscountControllerComponentTest {
         );
     }
 
+
+    @Test
+    void given_inputNegativeDiscountValue_when_addSpecifiedProductAmountDiscount_then_return201AndDiscountIdAndStorePositiveValueInDb()
+        throws Exception {
+        // Given
+        assertThat(discountAmountRepository.findAll()).isEmpty();
+
+        // When
+        var result = mockMvc.perform(post("/admin/adjustment/discount/amount")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                        {
+                            "discountName": "Specific Item 2nd 30% off",
+                            "isApplyToAllProduct": false,
+                            "shelfGoodId": "860214ce-e83b-4315-a44c-574c59708291",
+                            "currency": "HKD",
+                            "discountAmount": -33.3,
+                            "applyAtEveryNthNumberOfItem": 2
+                        }
+                        """
+                )
+            )
+
+            // Then
+            .andExpect(status().isCreated())
+            .andReturn();
+
+        List<DiscountAmountEntity> actualDiscountAmountList = discountAmountRepository.findAll();
+        assertAll(
+            () -> assertThat(actualDiscountAmountList.size()).isEqualTo(1),
+            () -> assertThat(actualDiscountAmountList.get(0).getId()).isNotNull(),
+            () -> assertThat(result.getResponse().getContentAsString()).isEqualTo(
+                actualDiscountAmountList.get(0).getId().toString()),
+            () -> assertThat(actualDiscountAmountList.get(0).getName()).isEqualTo("Specific Item 2nd 30% off"),
+            () -> assertThat(actualDiscountAmountList.get(0).isApplyToAllProduct()).isFalse(),
+            () -> assertThat(actualDiscountAmountList.get(0).getShelfGoodId())
+                .isEqualTo("860214ce-e83b-4315-a44c-574c59708291"),
+            () -> assertThat(actualDiscountAmountList.get(0).getCurrency()).isEqualTo("HKD"),
+            () -> assertThat(actualDiscountAmountList.get(0).getDiscountAmount().compareTo(BigDecimal.valueOf(33.3)))
+                .isEqualTo(0),
+            () -> assertThat(actualDiscountAmountList.get(0).getApplyAtEveryNthNumberOfItem()).isEqualTo(2)
+        );
+    }
+
     @Test
     void given_invalidAmountDiscountSetting_when_addAmountDiscount_then_return400()
         throws Exception {
