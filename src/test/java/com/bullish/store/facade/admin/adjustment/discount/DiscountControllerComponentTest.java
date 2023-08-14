@@ -150,8 +150,8 @@ class DiscountControllerComponentTest {
 
         assertAll(
             () -> assertThat(discountRatioRepository.findAll()).isEmpty(),
-            () -> assertThat(result.getResponse().getContentAsString())
-                .contains("Discount with specified shelfGoodId cannot be applied to all product")
+            () -> assertThat(result.getResponse().getContentAsString()).contains(
+                "Discount with specified shelfGoodId cannot be applied to all product. (Hints: remove shelfGoodId param)")
         );
     }
 
@@ -308,8 +308,9 @@ class DiscountControllerComponentTest {
 
         assertAll(
             () -> assertThat(discountAmountRepository.findAll()).isEmpty(),
-            () -> assertThat(result.getResponse().getContentAsString())
-                .contains("Discount with specified shelfGoodId cannot be applied to all product")
+            () -> assertThat(result.getResponse().getContentAsString()).contains(
+                "Discount with specified shelfGoodId cannot be applied to all product. (Hints: remove shelfGoodId param)")
+
         );
     }
 }

@@ -19,6 +19,8 @@ public class DiscountManagementImpl implements DiscountManagement {
     private final DiscountRatioRepository discountRatioRepository;
     private final DiscountAmountRepository discountAmountRepository;
     private final AdjustmentMapper adjustmentMapper = Mappers.getMapper(AdjustmentMapper.class);
+    private final String SHELF_GOOD_ID_AND_APPLY_TO_ALL_PRODUCT_SETTING_COEXIST_ERROR_MESSAGE =
+        "Discount with specified shelfGoodId cannot be applied to all product. (Hints: remove shelfGoodId param)";
 
     public DiscountManagementImpl(
         DiscountRatioRepository discountRatioRepository,
@@ -31,7 +33,7 @@ public class DiscountManagementImpl implements DiscountManagement {
     @Override
     public String addRatioDiscount(CreateRatioDiscount request) {
         if (request.isApplyToAllProduct() && StringUtils.isNotEmpty(request.shelfGoodId())) {
-            throw new IllegalArgumentException("Discount with specified shelfGoodId cannot be applied to all product.");
+            throw new IllegalArgumentException(SHELF_GOOD_ID_AND_APPLY_TO_ALL_PRODUCT_SETTING_COEXIST_ERROR_MESSAGE);
         }
         if (request.offRatio() <= 0 || request.offRatio() > 1) {
             throw new IllegalArgumentException("Discount ratio must be [0 < ratio <= 1].");
@@ -50,7 +52,7 @@ public class DiscountManagementImpl implements DiscountManagement {
     @Override
     public String addAmountDiscount(CreateAmountDiscount request) {
         if (request.isApplyToAllProduct() && StringUtils.isNotEmpty(request.shelfGoodId())) {
-            throw new IllegalArgumentException("Discount with specified shelfGoodId cannot be applied to all product.");
+            throw new IllegalArgumentException(SHELF_GOOD_ID_AND_APPLY_TO_ALL_PRODUCT_SETTING_COEXIST_ERROR_MESSAGE);
         }
 
         DiscountAmountEntity discountEntity = discountAmountRepository.save(DiscountAmountEntity.builder()
