@@ -4,6 +4,7 @@ import com.bullish.store.domain.product.api.ProductDto;
 import com.bullish.store.domain.product.api.ShelfGoodDto;
 import com.bullish.store.facade.admin.AdminFacadeController;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -90,15 +91,21 @@ public class ProductController {
     }
 
     record CreateProductRequest(
+        @Schema(example = "iPhone 13 mini")
         String productName,
+        @Schema(example = "Apple 13th small edition")
         String description,
+        @Schema(example = "HKD")
         String currency,
+        @Schema(example = "5000")
         BigDecimal basePrice
     ) {
     }
 
     record ProductLaunchRequestDto(
+        @Schema(example = "HKD")
         String currency,
+        @Schema(example = "5000")
         BigDecimal basePrice
     ) {
     }

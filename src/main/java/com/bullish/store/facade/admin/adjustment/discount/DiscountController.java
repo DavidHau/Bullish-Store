@@ -27,7 +27,7 @@ public class DiscountController {
         , description = "DiscountId will be returned.")
     @PostMapping("/adjustment/discount/ratio")
     public ResponseEntity<String> createRatioDiscount(
-        @RequestBody CreateAmountRatioRequest ratioDiscountRequest
+        @RequestBody CreateRatioDiscountRequest ratioDiscountRequest
     ) {
         String discountId = discountService.create(ratioDiscountRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(discountId);
@@ -43,7 +43,7 @@ public class DiscountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(discountId);
     }
 
-    record CreateAmountRatioRequest(
+    record CreateRatioDiscountRequest(
         @Schema(name = "Discount name", example = "Every 2nd item get 30% off")
         String discountName,
         boolean isApplyToAllProduct,
