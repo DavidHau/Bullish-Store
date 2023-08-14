@@ -24,7 +24,8 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @Operation(summary = "Create Product")
+    @Operation(summary = "Create Product"
+        , description = "ProductId will be returned.")
     @PostMapping("/products")
     public ResponseEntity<String> createProduct(
         @RequestBody CreateProductRequest productRequest
@@ -42,7 +43,7 @@ public class ProductController {
 
     @Operation(summary = "Permanently Delete Product")
     @DeleteMapping("/products/{product-id}")
-    public ResponseEntity<String> deleteProduct(
+    public ResponseEntity<Void> deleteProduct(
         @PathVariable("product-id") String productId,
         @RequestParam(value = "auto-discontinue", defaultValue = "false") boolean isAutoDiscontinue
     ) {
@@ -53,7 +54,8 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Put Product On Shelf")
+    @Operation(summary = "Put Product On Shelf"
+        , description = "ShelfGoodId will be returned.")
     @PostMapping("/products/{product-id}/launch")
     public ResponseEntity<String> launchProduct(
         @PathVariable("product-id") String productId,
@@ -69,7 +71,7 @@ public class ProductController {
 
     @Operation(summary = "Remove Product From Shelf")
     @DeleteMapping("/products/{product-id}/discontinue/{shelf-good-id}")
-    public ResponseEntity<String> discontinueProduct(
+    public ResponseEntity<Void> discontinueProduct(
         @PathVariable("product-id") String productId,
         @PathVariable("shelf-good-id") String shelfGoodId
     ) {

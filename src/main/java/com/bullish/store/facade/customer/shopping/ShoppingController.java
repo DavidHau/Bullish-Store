@@ -30,7 +30,7 @@ public class ShoppingController {
 
     @Operation(summary = "Add Product to Basket")
     @PostMapping("/basket/{shelf-good-id}")
-    public ResponseEntity<String> addProductToBasket(
+    public ResponseEntity<Void> addProductToBasket(
         @PathVariable("shelf-good-id") String shelfGoodId,
         @RequestHeader("x-bullish-customer-id") String customerId
     ) {
@@ -40,7 +40,7 @@ public class ShoppingController {
 
     @Operation(summary = "Remove Product from Basket")
     @DeleteMapping("/basket/{shelf-good-id}")
-    public ResponseEntity<String> removeProductFromBasket(
+    public ResponseEntity<Void> removeProductFromBasket(
         @PathVariable("shelf-good-id") String shelfGoodId,
         @RequestHeader("x-bullish-customer-id") String customerId
     ) {

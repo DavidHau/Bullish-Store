@@ -23,7 +23,8 @@ public class DiscountController {
         this.discountService = discountService;
     }
 
-    @Operation(summary = "Create Ratio Discount")
+    @Operation(summary = "Create Ratio Discount"
+        , description = "DiscountId will be returned.")
     @PostMapping("/adjustment/discount/ratio")
     public ResponseEntity<String> createRatioDiscount(
         @RequestBody DiscountManagement.CreateRatioDiscountRequest ratioDiscountRequest
@@ -32,7 +33,8 @@ public class DiscountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(discountId);
     }
 
-    @Operation(summary = "Create Amount Discount")
+    @Operation(summary = "Create Amount Discount"
+        , description = "DiscountId will be returned.")
     @PostMapping("/adjustment/discount/amount")
     public ResponseEntity<String> createAmountDiscount(
         @RequestBody CreateAmountDiscountRequest amountDiscountRequest

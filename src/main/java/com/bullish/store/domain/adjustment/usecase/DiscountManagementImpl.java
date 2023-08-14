@@ -33,6 +33,9 @@ public class DiscountManagementImpl implements DiscountManagement {
         if (request.isApplyToAllProduct() && StringUtils.isNotEmpty(request.shelfGoodId())) {
             throw new IllegalArgumentException("Discount with specified shelfGoodId cannot be applied to all product.");
         }
+        if (request.offRatio() <= 0 || request.offRatio() > 1) {
+            throw new IllegalArgumentException("Discount ratio must be [0 < ratio <= 1].");
+        }
 
         DiscountRatioEntity discountEntity = discountRatioRepository.save(DiscountRatioEntity.builder()
             .name(request.discountName())

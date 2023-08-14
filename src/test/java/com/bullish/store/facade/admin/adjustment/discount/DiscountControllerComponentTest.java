@@ -7,6 +7,8 @@ import com.bullish.store.domain.adjustment.usecase.DiscountRatioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -152,6 +154,41 @@ class DiscountControllerComponentTest {
                 .contains("Discount with specified shelfGoodId cannot be applied to all product")
         );
     }
+
+    @ValueSource(doubles = {-1, 0, 1.001, 10})
+    @ParameterizedTest
+    void given_invalidRatioDiscountRatioValue_when_addRatioDiscount_then_return400(double offRatio)
+        throws Exception {
+        // Given
+        assertThat(discountRatioRepository.findAll()).isEmpty();
+
+        // When
+        var result = mockMvc.perform(post("/admin/adjustment/discount/ratio")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                        {
+                            "discountName": "Specific Item 2nd not 0-100%% off",
+                            "isApplyToAllProduct": false,
+                            "shelfGoodId": "860214ce-e83b-4315-a44c-574c59708291",
+                            "offRatio": %f,
+                            "applyAtEveryNthNumberOfIdenticalItem": 2
+                        }
+                        """.formatted(offRatio)
+                )
+            )
+
+            // Then
+            .andExpect(status().isBadRequest())
+            .andReturn();
+
+        assertAll(
+            () -> assertThat(discountRatioRepository.findAll()).isEmpty(),
+            () -> assertThat(result.getResponse().getContentAsString())
+                .contains("Discount ratio must be [0 < ratio <= 1]")
+        );
+    }
+
 
     @Test
     void given_noDiscount_when_addSpecifiedProductAmountDiscount_then_return201AndDiscountIdAndStoreInDb()

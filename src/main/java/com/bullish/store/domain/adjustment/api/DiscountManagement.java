@@ -1,6 +1,7 @@
 package com.bullish.store.domain.adjustment.api;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.javamoney.moneta.Money;
 
 import java.math.BigDecimal;
@@ -29,6 +30,7 @@ public interface DiscountManagement {
         String discountName,
         boolean isApplyToAllProduct,
         String shelfGoodId,
+        @Schema(name = "Discount ratio", example = "0.3", description = "value should be between 0 and 1")
         double offRatio,
         int applyAtEveryNthNumberOfIdenticalItem
     ) {
