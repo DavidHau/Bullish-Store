@@ -44,13 +44,13 @@ public class DiscountController {
     }
 
     record CreateRatioDiscountRequest(
-        @Schema(example = "Every 2nd item get 30% off")
+        @Schema(example = "Every item get 30% off")
         String discountName,
         boolean isApplyToAllProduct,
         String shelfGoodId,
         @Schema(example = "0.3", description = "value should be between 0 and 1")
         double offRatio,
-        @Schema(example = "2", description = "1 means every item")
+        @Schema(example = "1", description = "1 means every item")
         int applyAtEveryNthNumberOfIdenticalItem
     ) {
     }
