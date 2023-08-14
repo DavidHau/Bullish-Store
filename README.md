@@ -63,8 +63,8 @@ Side note:
 
 `Id` attribute is defined as `String` in all DTO because of below reason:
 
-In DDD(Domain Drive Design) world, bounded context and autonomy are the soul. It's very important to "hide" the internal
-architecture / tech stack, in order to retain the freedom of choice.
+In DDD(Domain Driven Design) world, bounded context and autonomy are the soul. It's very important to "hide" the
+internal architecture / tech stack, in order to retain the freedom of choice.
 
 In order to ensure context root of endpoints providing to customer and admin are separated, ArchUnit is used in
 ArchitectureTest. It's also feasible to add more architecture test cases to protect architecture decisions being made by
