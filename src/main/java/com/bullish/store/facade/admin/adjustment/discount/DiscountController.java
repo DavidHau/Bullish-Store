@@ -44,11 +44,11 @@ public class DiscountController {
     }
 
     record CreateRatioDiscountRequest(
-        @Schema(name = "Discount name", example = "Every 2nd item get 30% off")
+        @Schema(example = "Every 2nd item get 30% off")
         String discountName,
         boolean isApplyToAllProduct,
         String shelfGoodId,
-        @Schema(name = "Discount ratio", example = "0.3", description = "value should be between 0 and 1")
+        @Schema(example = "0.3", description = "value should be between 0 and 1")
         double offRatio,
         @Schema(example = "2", description = "1 means every item")
         int applyAtEveryNthNumberOfIdenticalItem
@@ -56,14 +56,14 @@ public class DiscountController {
     }
 
     record CreateAmountDiscountRequest(
-        @Schema(name = "Discount name", example = "Every 2nd iPhone 13 mini get HKD 500 off")
+        @Schema(example = "Every 2nd iPhone 13 mini get HKD 500 off")
         String discountName,
         @Schema(example = "false")
         boolean isApplyToAllProduct,
         String shelfGoodId,
-        @Schema(name = "Currency", example = "HKD")
+        @Schema(example = "HKD")
         String currency,
-        @Schema(name = "Discount amount", example = "500")
+        @Schema(example = "500")
         BigDecimal discountAmount,
         @Schema(example = "2", description = "1 means every item")
         int applyAtEveryNthNumberOfIdenticalItem
