@@ -1,7 +1,6 @@
 package com.bullish.store.domain.adjustment.api;
 
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.javamoney.moneta.Money;
 
 import java.math.BigDecimal;
@@ -12,13 +11,13 @@ public interface DiscountManagement {
      * @param request
      * @return discountId
      */
-    String addRatioDiscount(CreateRatioDiscountRequest request);
+    String addRatioDiscount(CreateRatioDiscount request);
 
     /**
      * @param request
      * @return discountId
      */
-    String addAmountDiscount(CreateAmountDiscountRequest request);
+    String addAmountDiscount(CreateAmountDiscount request);
 
     List<DiscountRatioDto> getAllAutoApplyRatioDiscount();
 
@@ -26,24 +25,23 @@ public interface DiscountManagement {
 
     // TODO get all discounts
 
-    record CreateRatioDiscountRequest(
+    record CreateRatioDiscount(
         String discountName,
         boolean isApplyToAllProduct,
         String shelfGoodId,
-        @Schema(name = "Discount ratio", example = "0.3", description = "value should be between 0 and 1")
         double offRatio,
         int applyAtEveryNthNumberOfIdenticalItem
     ) {
     }
 
-    record CreateAmountDiscountRequest(
+    record CreateAmountDiscount(
         String discountName,
         boolean isApplyToAllProduct,
         String shelfGoodId,
         Money discountAmount,
         int applyAtEveryNthNumberOfIdenticalItem
     ) {
-        public CreateAmountDiscountRequest(
+        public CreateAmountDiscount(
             String discountName,
             boolean isApplyToAllProduct,
             String shelfGoodId,

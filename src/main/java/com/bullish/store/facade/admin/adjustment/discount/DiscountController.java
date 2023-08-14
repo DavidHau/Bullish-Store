@@ -1,8 +1,8 @@
 package com.bullish.store.facade.admin.adjustment.discount;
 
-import com.bullish.store.domain.adjustment.api.DiscountManagement;
 import com.bullish.store.facade.admin.AdminFacadeController;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class DiscountController {
         , description = "DiscountId will be returned.")
     @PostMapping("/adjustment/discount/ratio")
     public ResponseEntity<String> createRatioDiscount(
-        @RequestBody DiscountManagement.CreateRatioDiscountRequest ratioDiscountRequest
+        @RequestBody CreateAmountRatioRequest ratioDiscountRequest
     ) {
         String discountId = discountService.create(ratioDiscountRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(discountId);
@@ -43,12 +43,29 @@ public class DiscountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(discountId);
     }
 
-    record CreateAmountDiscountRequest(
+    record CreateAmountRatioRequest(
+        @Schema(name = "Discount name", example = "Every 2nd item get 30% off")
         String discountName,
         boolean isApplyToAllProduct,
         String shelfGoodId,
+        @Schema(name = "Discount ratio", example = "0.3", description = "value should be between 0 and 1")
+        double offRatio,
+        @Schema(example = "2", description = "1 means every item")
+        int applyAtEveryNthNumberOfIdenticalItem
+    ) {
+    }
+
+    record CreateAmountDiscountRequest(
+        @Schema(name = "Discount name", example = "Every 2nd iPhone 13 mini get HKD 500 off")
+        String discountName,
+        @Schema(example = "false")
+        boolean isApplyToAllProduct,
+        String shelfGoodId,
+        @Schema(name = "Currency", example = "HKD")
         String currency,
+        @Schema(name = "Discount amount", example = "500")
         BigDecimal discountAmount,
+        @Schema(example = "2", description = "1 means every item")
         int applyAtEveryNthNumberOfIdenticalItem
     ) {
     }

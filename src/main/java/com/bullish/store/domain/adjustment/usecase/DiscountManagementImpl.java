@@ -29,7 +29,7 @@ public class DiscountManagementImpl implements DiscountManagement {
     }
 
     @Override
-    public String addRatioDiscount(CreateRatioDiscountRequest request) {
+    public String addRatioDiscount(CreateRatioDiscount request) {
         if (request.isApplyToAllProduct() && StringUtils.isNotEmpty(request.shelfGoodId())) {
             throw new IllegalArgumentException("Discount with specified shelfGoodId cannot be applied to all product.");
         }
@@ -48,7 +48,7 @@ public class DiscountManagementImpl implements DiscountManagement {
     }
 
     @Override
-    public String addAmountDiscount(CreateAmountDiscountRequest request) {
+    public String addAmountDiscount(CreateAmountDiscount request) {
         if (request.isApplyToAllProduct() && StringUtils.isNotEmpty(request.shelfGoodId())) {
             throw new IllegalArgumentException("Discount with specified shelfGoodId cannot be applied to all product.");
         }
