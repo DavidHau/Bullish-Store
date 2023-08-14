@@ -42,13 +42,13 @@ public class ProductController {
 
     @Operation(summary = "Permanently Delete Product")
     @DeleteMapping("/products/{product-id}")
-    public ResponseEntity<String> discontinueProduct(
+    public ResponseEntity<String> deleteProduct(
         @PathVariable("product-id") String productId,
-        @RequestParam(value = "auto-discontinue", required = false) Boolean isAutoDiscontinue
+        @RequestParam(value = "auto-discontinue", defaultValue = "false") boolean isAutoDiscontinue
     ) {
         productService.delete(
             productId,
-            Boolean.TRUE.equals(isAutoDiscontinue)
+            isAutoDiscontinue
         );
         return ResponseEntity.noContent().build();
     }
