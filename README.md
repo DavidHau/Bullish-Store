@@ -73,3 +73,7 @@ adding more test cases in CI/CD.
 ### Dependency Diagram
 
 ![dependency diagram](src/main/resources/docs/dependency_diagram.png "Dependency Diagram")
+
+### ER Diagram
+
+![ER diagram](src/main/resources/docs/ER_diagram.png "ER Diagram")
