@@ -74,15 +74,11 @@ public class CheckOutServiceImpl implements CheckOutService {
     }
 
     private void applyAllAutoApplyDiscount(List<ReceiptDto.LineItem> goods) {
-        List<DiscountAmountDto> allAutoApplyAmountDiscount =
-            checkOutAdjustmentDomainApi.getAllAutoApplyAmountDiscount();
-        List<DiscountRatioDto> allAutoApplyRatioDiscount = checkOutAdjustmentDomainApi.getAllAutoApplyRatioDiscount();
-
-        for (DiscountDto discount : allAutoApplyAmountDiscount) {
+        for (DiscountDto discount : checkOutAdjustmentDomainApi.getAllAutoApplyAmountDiscount()) {
             applyDiscountToLineItems(goods, discount);
         }
 
-        for (DiscountDto discount : allAutoApplyRatioDiscount) {
+        for (DiscountDto discount : checkOutAdjustmentDomainApi.getAllAutoApplyRatioDiscount()) {
             applyDiscountToLineItems(goods, discount);
         }
     }
@@ -96,13 +92,18 @@ public class CheckOutServiceImpl implements CheckOutService {
             if (!isDiscountApplicable) {
                 continue;
             }
-            final String matchCountKey = good.getShelfId();
-            final int originalMatchCount = theNthMatchItemMap.getOrDefault(matchCountKey, 0);
+
+            // increment item match count by 1
+            final String itemMatchCountKey = good.getShelfId();
+            final int originalMatchCount = theNthMatchItemMap.getOrDefault(itemMatchCountKey, 0);
             final int currentMatchCount = originalMatchCount + 1;
-            theNthMatchItemMap.put(matchCountKey, currentMatchCount);
-            if (discount.getApplyAtEveryNthNumberOfItem() == currentMatchCount) {
+            theNthMatchItemMap.put(itemMatchCountKey, currentMatchCount);
+
+            if (discount.getApplyAtEveryNthNumberOfIdenticalItem() == currentMatchCount) {
                 applyDiscount(good, discount);
-                theNthMatchItemMap.put(matchCountKey, 0);
+
+                // reset item match count
+                theNthMatchItemMap.put(itemMatchCountKey, 0);
             }
         }
     }

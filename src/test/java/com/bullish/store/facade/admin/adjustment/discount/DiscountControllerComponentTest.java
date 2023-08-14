@@ -55,7 +55,7 @@ class DiscountControllerComponentTest {
                             "discountName": "All Item 2nd 30% off",
                             "isApplyToAllProduct": true,
                             "offRatio": 0.3,
-                            "applyAtEveryNthNumberOfItem": 2
+                            "applyAtEveryNthNumberOfIdenticalItem": 2
                         }
                         """
                 )
@@ -75,7 +75,7 @@ class DiscountControllerComponentTest {
             () -> assertThat(actualDiscountRatioList.get(0).isApplyToAllProduct()).isTrue(),
             () -> assertThat(actualDiscountRatioList.get(0).getShelfGoodId()).isNullOrEmpty(),
             () -> assertThat(actualDiscountRatioList.get(0).getOffRatio()).isEqualTo(0.3),
-            () -> assertThat(actualDiscountRatioList.get(0).getApplyAtEveryNthNumberOfItem()).isEqualTo(2)
+            () -> assertThat(actualDiscountRatioList.get(0).getApplyAtEveryNthNumberOfIdenticalItem()).isEqualTo(2)
         );
     }
 
@@ -95,7 +95,7 @@ class DiscountControllerComponentTest {
                             "isApplyToAllProduct": false,
                             "shelfGoodId": "860214ce-e83b-4315-a44c-574c59708291",
                             "offRatio": 0.3,
-                            "applyAtEveryNthNumberOfItem": 2
+                            "applyAtEveryNthNumberOfIdenticalItem": 2
                         }
                         """
                 )
@@ -116,7 +116,7 @@ class DiscountControllerComponentTest {
             () -> assertThat(actualDiscountRatioList.get(0).getShelfGoodId())
                 .isEqualTo("860214ce-e83b-4315-a44c-574c59708291"),
             () -> assertThat(actualDiscountRatioList.get(0).getOffRatio()).isEqualTo(0.3),
-            () -> assertThat(actualDiscountRatioList.get(0).getApplyAtEveryNthNumberOfItem()).isEqualTo(2)
+            () -> assertThat(actualDiscountRatioList.get(0).getApplyAtEveryNthNumberOfIdenticalItem()).isEqualTo(2)
         );
     }
 
@@ -136,7 +136,7 @@ class DiscountControllerComponentTest {
                             "isApplyToAllProduct": true,
                             "shelfGoodId": "860214ce-e83b-4315-a44c-574c59708291",
                             "offRatio": 0.3,
-                            "applyAtEveryNthNumberOfItem": 2
+                            "applyAtEveryNthNumberOfIdenticalItem": 2
                         }
                         """
                 )
@@ -170,7 +170,7 @@ class DiscountControllerComponentTest {
                             "shelfGoodId": "860214ce-e83b-4315-a44c-574c59708291",
                             "currency": "HKD",
                             "discountAmount": 33.3,
-                            "applyAtEveryNthNumberOfItem": 2
+                            "applyAtEveryNthNumberOfIdenticalItem": 2
                         }
                         """
                 )
@@ -193,7 +193,7 @@ class DiscountControllerComponentTest {
             () -> assertThat(actualDiscountAmountList.get(0).getCurrency()).isEqualTo("HKD"),
             () -> assertThat(actualDiscountAmountList.get(0).getDiscountAmount().compareTo(BigDecimal.valueOf(33.3)))
                 .isEqualTo(0),
-            () -> assertThat(actualDiscountAmountList.get(0).getApplyAtEveryNthNumberOfItem()).isEqualTo(2)
+            () -> assertThat(actualDiscountAmountList.get(0).getApplyAtEveryNthNumberOfIdenticalItem()).isEqualTo(2)
         );
     }
 
@@ -215,7 +215,7 @@ class DiscountControllerComponentTest {
                             "shelfGoodId": "860214ce-e83b-4315-a44c-574c59708291",
                             "currency": "HKD",
                             "discountAmount": -33.3,
-                            "applyAtEveryNthNumberOfItem": 2
+                            "applyAtEveryNthNumberOfIdenticalItem": 2
                         }
                         """
                 )
@@ -238,7 +238,7 @@ class DiscountControllerComponentTest {
             () -> assertThat(actualDiscountAmountList.get(0).getCurrency()).isEqualTo("HKD"),
             () -> assertThat(actualDiscountAmountList.get(0).getDiscountAmount().compareTo(BigDecimal.valueOf(33.3)))
                 .isEqualTo(0),
-            () -> assertThat(actualDiscountAmountList.get(0).getApplyAtEveryNthNumberOfItem()).isEqualTo(2)
+            () -> assertThat(actualDiscountAmountList.get(0).getApplyAtEveryNthNumberOfIdenticalItem()).isEqualTo(2)
         );
     }
 
@@ -259,7 +259,7 @@ class DiscountControllerComponentTest {
                             "shelfGoodId": "860214ce-e83b-4315-a44c-574c59708291",
                             "currency": "HKD",
                             "discountAmount": 33.3,
-                            "applyAtEveryNthNumberOfItem": 2
+                            "applyAtEveryNthNumberOfIdenticalItem": 2
                         }
                         """
                 )

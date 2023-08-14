@@ -25,8 +25,8 @@ to remove it from the shelf, then delete the product permanently.
 
 `Discount` setting can be configured to be applicable to all product by using `isApplyToAllProduct=true`, or target a
 on-sale product by setting `shelfGoodId`.
-`applyAtEveryNthNumberOfItem` setting is used to indicate how many number of *identical product* needed in order to get
-discount.
+`applyAtEveryNthNumberOfIdenticalItem` setting is used to indicate how many number of *identical product* needed in
+order to get discount.
 
 ## Architecture
 

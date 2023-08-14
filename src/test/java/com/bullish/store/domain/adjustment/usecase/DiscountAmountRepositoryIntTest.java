@@ -23,9 +23,9 @@ class DiscountAmountRepositoryIntTest {
     }
 
     @Test
-    void given_specifiedApplyAtEveryNthNumberOfItem_when_saveDiscountAmount_then_storeSpecifiedValue() {
+    void given_specifiedapplyAtEveryNthNumberOfIdenticalItem_when_saveDiscountAmount_then_storeSpecifiedValue() {
         // Given
-        final int applyAtEveryNthNumberOfItem = 2;
+        final int applyAtEveryNthNumberOfIdenticalItem = 2;
         final String shelfGoodId = UUID.randomUUID().toString();
         DiscountAmountEntity discountAmount = DiscountAmountEntity.builder()
             .name("My Discount")
@@ -33,7 +33,7 @@ class DiscountAmountRepositoryIntTest {
             .shelfGoodId(shelfGoodId)
             .currency("HKD")
             .discountAmount(BigDecimal.valueOf(20.2))
-            .applyAtEveryNthNumberOfItem(applyAtEveryNthNumberOfItem)
+            .applyAtEveryNthNumberOfIdenticalItem(applyAtEveryNthNumberOfIdenticalItem)
             .build();
 
         // When
@@ -49,8 +49,8 @@ class DiscountAmountRepositoryIntTest {
             () -> assertThat(actualDiscountAmount.getCurrency()).isEqualTo("HKD"),
             () -> assertThat(actualDiscountAmount.getDiscountAmount().compareTo(BigDecimal.valueOf(20.2)))
                 .isEqualTo(0),
-            () -> assertThat(actualDiscountAmount.getApplyAtEveryNthNumberOfItem())
-                .isEqualTo(applyAtEveryNthNumberOfItem)
+            () -> assertThat(actualDiscountAmount.getApplyAtEveryNthNumberOfIdenticalItem())
+                .isEqualTo(applyAtEveryNthNumberOfIdenticalItem)
         );
     }
 

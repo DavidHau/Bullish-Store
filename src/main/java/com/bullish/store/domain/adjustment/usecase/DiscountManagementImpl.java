@@ -39,7 +39,7 @@ public class DiscountManagementImpl implements DiscountManagement {
             .shelfGoodId(request.shelfGoodId())
             .applyToAllProduct(request.isApplyToAllProduct())
             .offRatio(request.offRatio())
-            .applyAtEveryNthNumberOfItem(request.applyAtEveryNthNumberOfItem())
+            .applyAtEveryNthNumberOfIdenticalItem(request.applyAtEveryNthNumberOfIdenticalItem())
             .build());
         return discountEntity.getId().toString();
     }
@@ -56,7 +56,7 @@ public class DiscountManagementImpl implements DiscountManagement {
             .applyToAllProduct(request.isApplyToAllProduct())
             .currency(request.discountAmount().getCurrency().getCurrencyCode())
             .discountAmount(request.discountAmount().abs().getNumberStripped())
-            .applyAtEveryNthNumberOfItem(request.applyAtEveryNthNumberOfItem())
+            .applyAtEveryNthNumberOfIdenticalItem(request.applyAtEveryNthNumberOfIdenticalItem())
             .build());
         return discountEntity.getId().toString();
     }

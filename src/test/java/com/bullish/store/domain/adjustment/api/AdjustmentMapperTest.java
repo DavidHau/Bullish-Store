@@ -24,7 +24,7 @@ class AdjustmentMapperTest {
             .name("NAME")
             .shelfGoodId("SHELF_GOOD_ID")
             .applyToAllProduct(true)
-            .applyAtEveryNthNumberOfItem(10)
+            .applyAtEveryNthNumberOfIdenticalItem(10)
             .offRatio(123.4)
             .build();
 
@@ -37,7 +37,7 @@ class AdjustmentMapperTest {
             () -> assertThat(actualRatioDiscountDto.getName()).isEqualTo("NAME"),
             () -> assertThat(actualRatioDiscountDto.getShelfGoodId()).isEqualTo("SHELF_GOOD_ID"),
             () -> assertThat(actualRatioDiscountDto.isApplyToAllProduct()).isEqualTo(true),
-            () -> assertThat(actualRatioDiscountDto.getApplyAtEveryNthNumberOfItem()).isEqualTo(10),
+            () -> assertThat(actualRatioDiscountDto.getApplyAtEveryNthNumberOfIdenticalItem()).isEqualTo(10),
             () -> assertThat(actualRatioDiscountDto.getOffRatio()).isEqualTo(123.4)
         );
     }
@@ -51,7 +51,7 @@ class AdjustmentMapperTest {
             .name("NAME")
             .shelfGoodId("SHELF_GOOD_ID")
             .applyToAllProduct(true)
-            .applyAtEveryNthNumberOfItem(10)
+            .applyAtEveryNthNumberOfIdenticalItem(10)
             .currency("HKD")
             .discountAmount(BigDecimal.valueOf(123.4))
             .build();
@@ -65,7 +65,7 @@ class AdjustmentMapperTest {
             () -> assertThat(actualAmountDiscount.getName()).isEqualTo("NAME"),
             () -> assertThat(actualAmountDiscount.getShelfGoodId()).isEqualTo("SHELF_GOOD_ID"),
             () -> assertThat(actualAmountDiscount.isApplyToAllProduct()).isEqualTo(true),
-            () -> assertThat(actualAmountDiscount.getApplyAtEveryNthNumberOfItem()).isEqualTo(10),
+            () -> assertThat(actualAmountDiscount.getApplyAtEveryNthNumberOfIdenticalItem()).isEqualTo(10),
             () -> assertThat(actualAmountDiscount.getCurrency()).isEqualTo("HKD"),
             () -> assertThat(actualAmountDiscount.getDiscountAmount()).isEqualTo(BigDecimal.valueOf(123.4))
         );

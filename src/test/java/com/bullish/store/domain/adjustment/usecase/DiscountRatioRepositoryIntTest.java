@@ -24,16 +24,16 @@ class DiscountRatioRepositoryIntTest {
     }
 
     @Test
-    void given_specifiedApplyAtEveryNthNumberOfItem_when_saveDiscountRatio_then_storeSpecifiedValue() {
+    void given_specifiedapplyAtEveryNthNumberOfIdenticalItem_when_saveDiscountRatio_then_storeSpecifiedValue() {
         // Given
-        final int applyAtEveryNthNumberOfItem = 2;
+        final int applyAtEveryNthNumberOfIdenticalItem = 2;
         final String shelfGoodId = UUID.randomUUID().toString();
         DiscountRatioEntity discountRatio = DiscountRatioEntity.builder()
             .name("My Discount")
             .applyToAllProduct(true)
             .shelfGoodId(shelfGoodId)
             .offRatio(0.3)
-            .applyAtEveryNthNumberOfItem(applyAtEveryNthNumberOfItem)
+            .applyAtEveryNthNumberOfIdenticalItem(applyAtEveryNthNumberOfIdenticalItem)
             .build();
 
         // When
@@ -47,13 +47,13 @@ class DiscountRatioRepositoryIntTest {
             () -> assertThat(actualDiscountRatio.isApplyToAllProduct()).isTrue(),
             () -> assertThat(actualDiscountRatio.getShelfGoodId()).isEqualTo(shelfGoodId),
             () -> assertThat(actualDiscountRatio.getOffRatio()).isEqualTo(0.3),
-            () -> assertThat(actualDiscountRatio.getApplyAtEveryNthNumberOfItem()).isEqualTo(
-                applyAtEveryNthNumberOfItem)
+            () -> assertThat(actualDiscountRatio.getApplyAtEveryNthNumberOfIdenticalItem()).isEqualTo(
+                applyAtEveryNthNumberOfIdenticalItem)
         );
     }
 
     @Test
-    void given_notSpecifiedApplyAtEveryNthNumberOfItem_when_saveDiscountRatio_then_storeDefaultValue() {
+    void given_notSpecifiedapplyAtEveryNthNumberOfIdenticalItem_when_saveDiscountRatio_then_storeDefaultValue() {
         // Given
         final String shelfGoodId = UUID.randomUUID().toString();
         DiscountRatioEntity discountRatio = DiscountRatioEntity.builder()
@@ -74,7 +74,7 @@ class DiscountRatioRepositoryIntTest {
             () -> assertThat(actualDiscountRatio.isApplyToAllProduct()).isTrue(),
             () -> assertThat(actualDiscountRatio.getShelfGoodId()).isEqualTo(shelfGoodId),
             () -> assertThat(actualDiscountRatio.getOffRatio()).isEqualTo(0.3),
-            () -> assertThat(actualDiscountRatio.getApplyAtEveryNthNumberOfItem())
+            () -> assertThat(actualDiscountRatio.getApplyAtEveryNthNumberOfIdenticalItem())
                 .isEqualTo(DEFAULT_APPLY_AT_EVERY_NTH_NUMBER_OF_ITEM)
         );
     }

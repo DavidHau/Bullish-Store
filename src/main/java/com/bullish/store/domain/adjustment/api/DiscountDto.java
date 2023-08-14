@@ -16,5 +16,5 @@ public abstract class DiscountDto {
     private String name;
     private String shelfGoodId;
     private boolean applyToAllProduct;
-    private int applyAtEveryNthNumberOfItem;
+    private int applyAtEveryNthNumberOfIdenticalItem;
 }

@@ -289,7 +289,7 @@ class ShoppingControllerComponentTest {
             .applyToAllProduct(false)
             .shelfGoodId(expectedShelfGood2.getShelfGoodId())
             .offRatio(0.5)
-            .applyAtEveryNthNumberOfItem(2)
+            .applyAtEveryNthNumberOfIdenticalItem(2)
             .build();
         discountRatioRepository.save(discountRatio);
 
@@ -350,7 +350,7 @@ class ShoppingControllerComponentTest {
             .shelfGoodId(expectedShelfGood2.getShelfGoodId())
             .currency("HKD")
             .discountAmount(BigDecimal.valueOf(8000))
-            .applyAtEveryNthNumberOfItem(2)
+            .applyAtEveryNthNumberOfIdenticalItem(2)
             .build();
         discountAmountRepository.save(discountAmount);
 

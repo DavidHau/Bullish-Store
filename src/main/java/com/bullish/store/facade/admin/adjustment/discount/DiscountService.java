@@ -25,7 +25,7 @@ public class DiscountService {
             amountDiscountRequest.shelfGoodId(),
             amountDiscountRequest.currency(),
             amountDiscountRequest.discountAmount(),
-            amountDiscountRequest.applyAtEveryNthNumberOfItem()
+            amountDiscountRequest.applyAtEveryNthNumberOfIdenticalItem()
         ));
     }
 }

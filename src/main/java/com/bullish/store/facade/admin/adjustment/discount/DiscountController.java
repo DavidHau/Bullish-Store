@@ -47,7 +47,7 @@ public class DiscountController {
         String shelfGoodId,
         String currency,
         BigDecimal discountAmount,
-        int applyAtEveryNthNumberOfItem
+        int applyAtEveryNthNumberOfIdenticalItem
     ) {
     }
 }

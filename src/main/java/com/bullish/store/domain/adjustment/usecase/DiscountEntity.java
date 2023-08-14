@@ -31,6 +31,6 @@ public abstract class DiscountEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private int applyAtEveryNthNumberOfItem = 1;
+    private int applyAtEveryNthNumberOfIdenticalItem = 1;
 
 }

@@ -30,7 +30,7 @@ public interface DiscountManagement {
         boolean isApplyToAllProduct,
         String shelfGoodId,
         double offRatio,
-        int applyAtEveryNthNumberOfItem
+        int applyAtEveryNthNumberOfIdenticalItem
     ) {
     }
 
@@ -39,7 +39,7 @@ public interface DiscountManagement {
         boolean isApplyToAllProduct,
         String shelfGoodId,
         Money discountAmount,
-        int applyAtEveryNthNumberOfItem
+        int applyAtEveryNthNumberOfIdenticalItem
     ) {
         public CreateAmountDiscountRequest(
             String discountName,
@@ -47,14 +47,14 @@ public interface DiscountManagement {
             String shelfGoodId,
             String currency,
             BigDecimal discountAmount,
-            int applyAtEveryNthNumberOfItem
+            int applyAtEveryNthNumberOfIdenticalItem
         ) {
             this(
                 discountName,
                 isApplyToAllProduct,
                 shelfGoodId,
                 Money.of(discountAmount, currency),
-                applyAtEveryNthNumberOfItem
+                applyAtEveryNthNumberOfIdenticalItem
             );
         }
     }
